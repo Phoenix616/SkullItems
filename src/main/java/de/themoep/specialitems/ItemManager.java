@@ -280,13 +280,13 @@ public class ItemManager {
      * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
      */
     public boolean executeActions(Player player, SpecialItem item, ActionTrigger trigger) {
-        boolean hasUsePerm = plugin.getConfig().getBoolean("permissions.use") // Config option perm for use is enabled
-                && !plugin.getConfig().getBoolean("permissions.usepertrigger") // Trigger has use as parent, no need to check use
-                && player.hasPermission("specialitems.item." + item.getId() + ".use");
-        boolean hasTriggerPerm = !hasUsePerm // Only check if player doesn't already have usePerm
-                && plugin.getConfig().getBoolean("permissions.usepertrigger") // Only check if per trigger is enabled
-                && player.hasPermission("specialitems.item." + item.getId() + ".use." + trigger);
-        if (hasUsePerm || hasTriggerPerm) {
+        boolean hasPermission = true;
+        if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
+            hasPermission = player.hasPermission("specialitems.item." + item.getId() + ".use." + trigger);
+        } else if (plugin.getConfig().getBoolean("permissions.use")) {
+            hasPermission = player.hasPermission("specialitems.item." + item.getId() + ".use");
+        }
+        if (hasPermission) {
             return item.getActionSet().execute(trigger, player);
         } else {
             player.sendMessage(plugin.getLang("nopermission"));
