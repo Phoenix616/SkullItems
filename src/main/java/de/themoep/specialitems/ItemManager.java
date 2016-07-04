@@ -269,7 +269,7 @@ public class ItemManager {
     public boolean isSpecialItem(ItemStack item) {
         return item.hasItemMeta()
                 && item.getItemMeta().hasLore()
-                && ChatColor.stripColor(item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1)).equals(plugin.getName());
+                && item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1).contains(plugin.getName());
     }
 
     /**
