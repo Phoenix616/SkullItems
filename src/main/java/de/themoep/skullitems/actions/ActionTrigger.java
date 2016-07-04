@@ -16,11 +16,15 @@ package de.themoep.skullitems.actions;
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
 public enum ActionTrigger {
-    RIGHT_CLICK_IN_HAND,
-    LEFT_CLICK_IN_HAND,
-    MIDDLE_CLICK_IN_HAND,
-    RIGHT_CLICK_IN_INVENTORY,
-    LEFT_CLICK_IN_INVENTORY,
-    MIDDLE_CLICK_IN_INVENTORY,
+    RIGHT_CLICK_HAND,
+    LEFT_CLICK_HAND,
+    MIDDLE_CLICK_HAND,
+    RIGHT_CLICK_INV,
+    SHIFT_RIGHT_CLICK_INV,
+    LEFT_CLICK_INV,
+    SHIFT_LEFT_CLICK_INV,
+    MIDDLE_CLICK_INV,
+    SHIFT_MIDDLE_CLICK_INV,
     DROP,
+    UNSUPPORTED,
 }
