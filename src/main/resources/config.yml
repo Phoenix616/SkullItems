@@ -1,0 +1,21 @@
+# Enable per action permissions
+permissions:
+  use: false
+  usepertrigger: false
+  drop: false
+  craft: false
+items:
+  workbench:
+    name: Mini Craftingtable
+    lore:
+    - Rightclick to open crafting interface
+    action:
+      RIGHT_CLICK_IN_HAND:
+      - OPEN_CRAFTING
+  enderchest:
+    name: Mini Enderchest
+    lore:
+    - Rightclick to open your enderchest
+    action:
+      RIGHT_CLICK_IN_HAND:
+      - OPEN_ENDERCHEST

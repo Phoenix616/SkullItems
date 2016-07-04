@@ -1,0 +1,22 @@
+name: ${project.name}
+main: de.themoep.skullitems.SkullItems
+version: '${minecraft.plugin.version}'
+description: ${project.description}
+authors: [Phoenix616]
+commands:
+   skullitems:
+      aliases: [skullitem]
+      description: Command description.
+      usage: /<command> [list|info <itemname>|set <itemname> <key> [<value>]|reload]
+      permission: skullitems.command
+      permission-message: You don't have the permission <permission>
+permissions:
+   skullitems.command:
+      description: Gives permission to the plugin command
+      default: op
+   skullitems.command.set:
+      description: Gives permission to the plugin command
+      default: op
+   skullitems.command.reload:
+      description: Gives permission to the plugin command
+      default: op
