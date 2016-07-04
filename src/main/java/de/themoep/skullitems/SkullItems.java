@@ -1,6 +1,6 @@
 package de.themoep.skullitems;
 
-import de.themoep.skullitems.listeners.ItemInteractListener;
+import de.themoep.skullitems.listeners.ActionTriggerListener;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,7 +27,7 @@ public class SkullItems extends JavaPlugin {
     public void onEnable() {
         loadConfig();
         getCommand("skullitem").setExecutor(new SkullItemCommand(this));
-        getServer().getPluginManager().registerEvents(new ItemInteractListener(this), this);
+        getServer().getPluginManager().registerEvents(new ActionTriggerListener(this), this);
     }
 
     private void loadConfig() {

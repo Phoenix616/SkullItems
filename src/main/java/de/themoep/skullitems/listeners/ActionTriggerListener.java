@@ -28,10 +28,10 @@ import java.util.logging.Level;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class ItemInteractListener implements Listener {
+public class ActionTriggerListener implements Listener {
     private final SkullItems plugin;
 
-    public ItemInteractListener(SkullItems plugin) {
+    public ActionTriggerListener(SkullItems plugin) {
         this.plugin = plugin;
     }
 
