@@ -118,11 +118,7 @@ class ItemAction {
      * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
      */
     public boolean execute(Player player) {
-        boolean cancel = true;
         switch (getType()) {
-            case DONT_CANCEL:
-                cancel = false;
-                break;
             case OPEN_CRAFTING:
                 player.closeInventory();
                 player.openWorkbench(null, true);
@@ -156,7 +152,10 @@ class ItemAction {
                 if (hasValue()) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', getValue(player)));
                 }
+                break;
+            case DONT_CANCEL:
+                return false;
         }
-        return cancel;
+        return true;
     }
 }
