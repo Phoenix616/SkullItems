@@ -175,7 +175,7 @@ public class SpecialItemCommand implements CommandExecutor {
                             for (Map.Entry<ActionTrigger, List<ItemAction>> entry : item.getActionSet().entrySet()) {
                                 sender.sendMessage(" - " + entry.getKey() + ":");
                                 for (ItemAction action : entry.getValue()) {
-                                    sender.sendMessage("   - " + action);
+                                    sender.sendMessage(ChatColor.GRAY + "    > " + action);
                                 }
                             }
                         } else {
