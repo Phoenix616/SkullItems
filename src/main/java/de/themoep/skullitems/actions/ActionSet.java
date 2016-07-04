@@ -88,10 +88,15 @@ public class ActionSet {
      * Execute all actions for a specific trigger on/with a player
      * @param trigger The trigger
      * @param player The player who triggered this skull item
+     * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
      */
-    public void execute(ActionTrigger trigger, Player player) {
+    public boolean execute(ActionTrigger trigger, Player player) {
+        boolean cancel = true;
         for (ItemAction action : getActions(trigger)) {
             switch (action.getType()) {
+                case DONT_CANCEL:
+                    cancel = false;
+                    break;
                 case OPEN_CRAFTING:
                     player.closeInventory();
                     player.openWorkbench(null, true);
@@ -123,5 +128,6 @@ public class ActionSet {
                     break;
             }
         }
+        return cancel;
     }
 }

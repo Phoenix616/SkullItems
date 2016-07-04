@@ -253,7 +253,14 @@ public class ItemManager {
                 && ChatColor.stripColor(item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1)).equals(plugin.getName());
     }
 
-    public void executeActions(Player player, SkullItem item, ActionTrigger trigger) {
+    /**
+     * Execute all actions for a specific trigger on/with a player
+     * @param player The player who triggered this skull item
+     * @param item the SkullItem
+     * @param trigger The trigger
+     * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
+     */
+    public boolean executeActions(Player player, SkullItem item, ActionTrigger trigger) {
         boolean hasUsePerm = plugin.getConfig().getBoolean("permissions.use") // Config option perm for use is enabled
                 && !plugin.getConfig().getBoolean("permissions.usepertrigger") // Trigger has use as parent, no need to check use
                 && player.hasPermission("skullitems.item." + item.getId() + ".use");
@@ -261,7 +268,8 @@ public class ItemManager {
                 && plugin.getConfig().getBoolean("permissions.usepertrigger") // Only check if per trigger is enabled
                 && player.hasPermission("skullitems.item." + item.getId() + ".use." + trigger);
         if (hasUsePerm || hasTriggerPerm) {
-            item.getActions().execute(trigger, player);
+            return item.getActions().execute(trigger, player);
         }
+        return false;
     }
 }

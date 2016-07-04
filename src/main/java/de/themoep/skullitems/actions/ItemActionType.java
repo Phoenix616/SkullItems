@@ -21,7 +21,8 @@ enum ItemActionType {
     OPEN_ENCHANTING,
     OPEN_ANVIL,
     RUN_COMMAND(true),
-    CONSOLE_COMMAND(true);
+    CONSOLE_COMMAND(true),
+    DONT_CANCEL;
 
     private final boolean requiresValue;
 
