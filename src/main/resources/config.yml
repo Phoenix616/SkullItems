@@ -10,14 +10,50 @@ items:
   workbench:
     displayname: Mini Craftingtable
     lore:
-    - Rightclick to open crafting interface
+    - Rightclick in hand
+    - to open crafting gui
     actions:
       RIGHT_CLICK_HAND:
       - OPEN_CRAFTING
+    shape:
+    - i i
+    - uxu
+    - uuu
+    keys:
+      x: workbench
+      i: string
+      u: leather
+    item:
+      ==: org.bukkit.inventory.ItemStack
+      type: SKULL_ITEM
+      damage: 3
+      meta:
+        ==: ItemMeta
+        meta-type: SKULL
+        internal: H4sIAAAAAAAAAE1Py06DQBS9mpgg8TPckkCBKSy6aCTSIZ1WKGBhx2MQ6IANBQvzXX6gs3RxkvNcHBlAhpfTZWLsY/iuGkYleMQlvFIDFRqyTCW3jVIx1oLZamkq1EKVtbLsrCyRDLIYXekwNvT2DNJI53Ea6E0GgAcJnuKMTRR+6eKp6blWy7PHigUjocOTyo64va5xHy/5G0a4E/lui/aL/a9rjtmnyRLdq9Pen/IuVvd6wOgu0Iou+klWkZ46dUtaf0kdjx3cxCAONtL2wokrNE87wqM7CYOGtO/NIcSawP3o4jnhW5WEX3PSCo/7M+Ei53GNe82u/M1GPIA/bNPuMRwBAAA=
   enderchest:
     displayname: Mini Enderchest
     lore:
-    - Rightclick to open your enderchest
+    - Rightclick in hand
+    - to open encherchest
     actions:
       RIGHT_CLICK_HAND:
       - OPEN_ENDERCHEST
+    recipe:
+      type: shaped
+      shape:
+      - i i
+      - uxu
+      - uuu
+      keys:
+        x: ender_chest
+        i: string
+        u: leather
+    item:
+      ==: org.bukkit.inventory.ItemStack
+      type: SKULL_ITEM
+      damage: 3
+      meta:
+        ==: ItemMeta
+        meta-type: SKULL
+        internal: H4sIAAAAAAAAAE2PTW6DMBhEv1aqRFGP0S2Sza+8yCIqamIUoJCExN6BcQTU0CiBCjhXDliW3c3ozVuMDqDD2/57UOrr9nOpldTgmZbwTpBt2p6NDVLanmFj7Bg5kcJwLSILIpzSsYQO+iJd5a2v5f0VtF6O/XCTdx0AnjR4yXI1SHjIKUD8XKHyHCgxUXfphz1SMW2uHu2yqfigLm0Xvl27u4n82zp9fnIUs4KKd8lQtBnaWamS2xSL9vgbzgLx03GMDsnE5gRHTdRyn6vITKywTVXYLHkOLWayMd7wmvtrxMyoYs1nHW/oFPshDs20in0xR36lmMlr2mFySVar5QH8AfQxFSMcAQAA
