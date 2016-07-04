@@ -170,10 +170,10 @@ public class ItemManager {
     /**
      * Get a skull item by it's name.
      * @param id The id of the special item
-     * @return A copy of the saved special item. Use the manipulation methods to change configs!
+     * @return The saved special item. Null if none was found. (Use the manipulation methods to change configs!)
      */
     public SpecialItem getSpecialItem(String id) {
-        return new SpecialItem(itemMap.get(id.toLowerCase()));
+        return itemMap.get(id.toLowerCase());
     }
 
     /**
