@@ -8,14 +8,14 @@ lang:
   nopermission: &cYou don't have the permission to use this item!
 items:
   workbench:
-    name: Mini Craftingtable
+    displayname: Mini Craftingtable
     lore:
     - Rightclick to open crafting interface
     action:
       RIGHT_CLICK_HAND:
       - OPEN_CRAFTING
   enderchest:
-    name: Mini Enderchest
+    displayname: Mini Enderchest
     lore:
     - Rightclick to open your enderchest
     action:

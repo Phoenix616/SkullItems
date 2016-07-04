@@ -74,7 +74,7 @@ public class ItemManager {
             ConfigurationSection itemSection = items.getConfigurationSection(id);
             SpecialItem item = new SpecialItem(
                     id,
-                    itemSection.getString("name"),
+                    itemSection.getString("displayname"),
                     itemSection.getItemStack("item"),
                     new ActionSet(itemSection.getConfigurationSection("action")),
                     itemSection.getStringList("lore")
@@ -169,11 +169,11 @@ public class ItemManager {
 
     /**
      * Get a skull item by it's name.
-     * @param name The name of the skull item
-     * @return A copy of the saved skull item. Use the manipulation methods to change configs!
+     * @param id The id of the special item
+     * @return A copy of the saved special item. Use the manipulation methods to change configs!
      */
-    public SpecialItem getSpecialItem(String name) {
-        return new SpecialItem(itemMap.get(name.toLowerCase()));
+    public SpecialItem getSpecialItem(String id) {
+        return new SpecialItem(itemMap.get(id.toLowerCase()));
     }
 
     /**
@@ -289,5 +289,22 @@ public class ItemManager {
             player.sendMessage(plugin.getLang("lang.nopermission"));
         }
         return true;
+    }
+
+    public void setValue(String id, String key, Object object) {
+        SpecialItem item = itemMap.get(id.toLowerCase());
+        if (item != null) {
+            plugin.getConfig().set("items." + item.getId() + "." + key.toLowerCase(), object);
+            ConfigurationSection itemSection = plugin.getConfig().getConfigurationSection("items." + item.getId());
+            item = new SpecialItem(
+                    item.getId(),
+                    itemSection.getString("displayname"),
+                    itemSection.getItemStack("item"),
+                    new ActionSet(itemSection.getConfigurationSection("action")),
+                    itemSection.getStringList("lore")
+            );
+            itemMap.put(item.getId(), item);
+            plugin.saveConfig();
+        }
     }
 }

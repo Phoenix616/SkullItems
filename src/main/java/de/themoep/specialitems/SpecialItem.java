@@ -47,24 +47,12 @@ public class SpecialItem {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public ItemStack getItem() {
         return item;
     }
 
-    public void setItem(ItemStack item) {
-        this.item = item;
-    }
-
     public List<String> getLore() {
         return lore;
-    }
-
-    public void setLore(List<String> lore) {
-        this.lore = lore;
     }
 
     public ActionSet getActions() {

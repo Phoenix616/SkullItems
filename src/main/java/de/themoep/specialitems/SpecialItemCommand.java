@@ -1,6 +1,7 @@
 package de.themoep.specialitems;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -78,7 +79,7 @@ public class SpecialItemCommand implements CommandExecutor {
                                 return true;
                             }
 
-                            if(player.getInventory().addItem(item).size() > 0) {
+                            if (player.getInventory().addItem(item).size() > 0) {
                                 sender.sendMessage(plugin.getTag() + ChatColor.RED
                                         + "Could not give item as you don't have any space iny our inventory!");
                             } else {
@@ -93,6 +94,56 @@ public class SpecialItemCommand implements CommandExecutor {
                     } else {
                         sender.sendMessage(plugin.getTag() + ChatColor.RED + "Usage: /" + label + " get <itemname>");
                     }
+                }
+            } else if ("set".equals(args[0])) {
+                if (plugin.checkPerm(sender, "specialitems.command.set")) {
+                    if (args.length > 2) {
+                        SpecialItem item = plugin.getItemManager().getSpecialItem(args[1]);
+                        if (item != null) {
+                            Object value = null;
+                            if ("item".equalsIgnoreCase(args[2])) {
+                                if (args.length > 3) {
+                                    try {
+                                        value = new ItemStack(Material.valueOf(args[3].toUpperCase()));
+                                    } catch (IllegalArgumentException e) {
+                                        sender.sendMessage(plugin.getTag() + ChatColor.RED + "No material with the name "
+                                                + ChatColor.YELLOW + args[3] + ChatColor.YELLOW + " found!");
+                                    }
+                                } else if (sender instanceof Player) {
+                                    value = ((Player) sender).getInventory().getItemInHand();
+                                } else {
+                                    sender.sendMessage(plugin.getTag() + ChatColor.RED
+                                            + "Use /" + label + " set <itemname> item <material> " +
+                                            "to set the item from the console!");
+                                    return true;
+                                }
+
+                                return true;
+                            } else if ("displayname".equalsIgnoreCase(args[2])) {
+                                if (args.length > 3) {
+                                    StringBuilder sb = new StringBuilder(args[3]);
+                                    for (int i = 4; i < args.length; i++) {
+                                        sb.append(" ").append(args[i]);
+                                    }
+                                    value = sb.toString();
+                                } else {
+                                    sender.sendMessage(plugin.getTag() + ChatColor.RED
+                                            + "Use /" + label + " set <itemname> displayname <name> " +
+                                            "to set the displayname!");
+                                    return true;
+                                }
+                            }
+
+                            if (value != null) {
+                                plugin.getItemManager().setValue(item.getId(), args[2], value);
+                            }
+                        } else {
+                            sender.sendMessage(plugin.getTag() + ChatColor.RED + "No item with the name "
+                                    + ChatColor.YELLOW + args[1] + ChatColor.YELLOW + " found!");
+                            return true;
+                        }
+                    }
+                    sender.sendMessage(plugin.getTag() + ChatColor.RED + "Usage: /" + label + " set <itemname> [item|displayname] [<value>]");
                 }
             } else {
                 return false;
