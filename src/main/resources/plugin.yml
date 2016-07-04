@@ -7,11 +7,20 @@ commands:
    specialitems:
       aliases: [skullitem]
       description: Command description.
-      usage: /<command> [list|info <itemname>|set <itemname> <key> [<value>]|reload]
+      usage: /<command> list|info|get|set|reload
       permission: specialitems.command
       permission-message: You don't have the permission <permission>
 permissions:
    specialitems.command:
+      description: Gives permission to the plugin command
+      default: op
+   specialitems.command.list:
+      description: Gives permission to the plugin command
+      default: op
+   specialitems.command.get:
+      description: Gives permission to the plugin command
+      default: op
+   specialitems.command.get.others:
       description: Gives permission to the plugin command
       default: op
    specialitems.command.set:

@@ -2,6 +2,7 @@ package de.themoep.specialitems;
 
 import de.themoep.specialitems.listeners.ActionTriggerListener;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -30,7 +31,7 @@ public class SpecialItems extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ActionTriggerListener(this), this);
     }
 
-    private void loadConfig() {
+    protected void loadConfig() {
         saveDefaultConfig();
         reloadConfig();
         itemManager = new ItemManager(this);
@@ -49,5 +50,20 @@ public class SpecialItems extends JavaPlugin {
             msg = msg.replace("%" + repl[i] + "%", repl[i + 1]);
         }
         return ChatColor.translateAlternateColorCodes('&', msg);
+    }
+
+    /**
+     * Get the tag to use in chat for this plugin including formatting
+     */
+    public String getTag() {
+        return ChatColor.YELLOW + "[" + ChatColor.RED + getName() + ChatColor.YELLOW + "]" + ChatColor.RESET;
+    }
+
+    public boolean checkPerm(CommandSender sender, String permission) {
+        if (sender.hasPermission(permission)) {
+            return true;
+        }
+        sender.sendMessage(ChatColor.RED + "You don't have the permission " + permission);
+        return false;
     }
 }
