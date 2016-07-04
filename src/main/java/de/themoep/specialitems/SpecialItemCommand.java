@@ -136,6 +136,7 @@ public class SpecialItemCommand implements CommandExecutor {
                                 plugin.getItemManager().setValue(item.getId(), args[2], value);
                                 sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + " Set " + args[2]
                                         + " for " + item.getId() + "!");
+                                return true;
                             }
                         } else {
                             sender.sendMessage(plugin.getTag() + ChatColor.RED + " No item with the name "
