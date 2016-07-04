@@ -97,6 +97,8 @@ public class ItemManager {
                         }
                     } else if ("shaped".equalsIgnoreCase(recipeType)) {
                         recipe = new ShapedRecipe(getItemStack(item));
+                        List<String> shape = recipeSection.getStringList("shape");
+                        ((ShapedRecipe) recipe).shape(shape.toArray(new String[shape.size()]));
                         for (String rKey : recipeSection.getConfigurationSection("keys").getKeys(false)) {
                             if (rKey.length() > 1) {
                                 throw new IllegalArgumentException(
@@ -106,8 +108,6 @@ public class ItemManager {
                             Material mat = Material.valueOf(recipeSection.getString("keys." + rKey).toUpperCase());
                             ((ShapedRecipe) recipe).setIngredient(rKey.toCharArray()[0], mat);
                         }
-                        List<String> shape = recipeSection.getStringList("shape");
-                        ((ShapedRecipe) recipe).shape(shape.toArray(new String[shape.size()]));
                     } else if ("furnace".equalsIgnoreCase(recipeType)) {
                         recipe = new FurnaceRecipe(getItemStack(item), Material.valueOf(recipeSection.getString("input")));
                         ((FurnaceRecipe) recipe).setExperience((float) recipeSection.getDouble("exp"));
