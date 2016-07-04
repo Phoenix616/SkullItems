@@ -117,8 +117,6 @@ public class SpecialItemCommand implements CommandExecutor {
                                             "to set the item from the console!");
                                     return true;
                                 }
-
-                                return true;
                             } else if ("displayname".equalsIgnoreCase(args[2])) {
                                 if (args.length > 3) {
                                     StringBuilder sb = new StringBuilder(args[3]);
@@ -136,6 +134,8 @@ public class SpecialItemCommand implements CommandExecutor {
 
                             if (value != null) {
                                 plugin.getItemManager().setValue(item.getId(), args[2], value);
+                                sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + "Set " + args[2]
+                                        + " for " + item.getId() + "!");
                             }
                         } else {
                             sender.sendMessage(plugin.getTag() + ChatColor.RED + "No item with the name "
