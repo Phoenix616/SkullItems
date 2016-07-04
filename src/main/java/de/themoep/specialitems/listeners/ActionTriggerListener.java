@@ -1,8 +1,8 @@
-package de.themoep.skullitems.listeners;
+package de.themoep.specialitems.listeners;
 
-import de.themoep.skullitems.SkullItem;
-import de.themoep.skullitems.SkullItems;
-import de.themoep.skullitems.actions.ActionTrigger;
+import de.themoep.specialitems.SpecialItem;
+import de.themoep.specialitems.SpecialItems;
+import de.themoep.specialitems.actions.ActionTrigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,9 +29,9 @@ import java.util.logging.Level;
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
 public class ActionTriggerListener implements Listener {
-    private final SkullItems plugin;
+    private final SpecialItems plugin;
 
-    public ActionTriggerListener(SkullItems plugin) {
+    public ActionTriggerListener(SpecialItems plugin) {
         this.plugin = plugin;
     }
 
@@ -43,7 +43,7 @@ public class ActionTriggerListener implements Listener {
 
         boolean cancel = true;
         try {
-            SkullItem item = plugin.getItemManager().getSkullItem(event.getItem());
+            SpecialItem item = plugin.getItemManager().getSkullItem(event.getItem());
             if (item == null) {
                 return;
             }
@@ -81,7 +81,7 @@ public class ActionTriggerListener implements Listener {
 
         boolean cancel = true;
         try {
-            SkullItem item = plugin.getItemManager().getSkullItem(event.getCurrentItem());
+            SpecialItem item = plugin.getItemManager().getSkullItem(event.getCurrentItem());
             if (item == null) {
                 return;
             }
@@ -125,7 +125,7 @@ public class ActionTriggerListener implements Listener {
     public void onItemDrop(PlayerDropItemEvent event) {
         boolean cancel = true;
         try {
-            SkullItem item = plugin.getItemManager().getSkullItem(event.getItemDrop().getItemStack());
+            SpecialItem item = plugin.getItemManager().getSkullItem(event.getItemDrop().getItemStack());
             if (item == null) {
                 return;
             }

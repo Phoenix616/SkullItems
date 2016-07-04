@@ -1,7 +1,7 @@
-package de.themoep.skullitems;
+package de.themoep.specialitems;
 
-import de.themoep.skullitems.actions.ActionSet;
-import de.themoep.skullitems.actions.ActionTrigger;
+import de.themoep.specialitems.actions.ActionSet;
+import de.themoep.specialitems.actions.ActionTrigger;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -36,11 +36,11 @@ import java.util.logging.Level;
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
 public class ItemManager {
-    private final SkullItems plugin;
+    private final SpecialItems plugin;
 
-    private Map<String, SkullItem> itemMap;
+    private Map<String, SpecialItem> itemMap;
 
-    public ItemManager(SkullItems plugin) {
+    public ItemManager(SpecialItems plugin) {
         this.plugin = plugin;
         int itemsLoaded = loadItems();
         plugin.getLogger().log(Level.INFO, itemsLoaded + " skull items loaded!");
@@ -59,7 +59,7 @@ public class ItemManager {
         }
         for (String id : items.getKeys(false)) {
             ConfigurationSection itemSection = items.getConfigurationSection(id);
-            SkullItem item = new SkullItem(
+            SpecialItem item = new SpecialItem(
                     id,
                     itemSection.getString("name"),
                     itemSection.getItemStack("item"),
@@ -111,7 +111,7 @@ public class ItemManager {
 
             // Register permissions
             if (plugin.getConfig().getBoolean("permissions.use")) {
-                Permission usePerm = new Permission("skullitems.item." + id.toLowerCase() + ".use");
+                Permission usePerm = new Permission("specialitems.item." + id.toLowerCase() + ".use");
                 try {
                     plugin.getServer().getPluginManager().addPermission(usePerm);
                 } catch (IllegalArgumentException e) {
@@ -120,7 +120,7 @@ public class ItemManager {
                 }
                 if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
                     for (ActionTrigger trigger : ActionTrigger.values()) {
-                        Permission triggerPerm = new Permission("skullitems.item." + id.toLowerCase() + ".use." + trigger.toString().toLowerCase());
+                        Permission triggerPerm = new Permission("specialitems.item." + id.toLowerCase() + ".use." + trigger.toString().toLowerCase());
                         triggerPerm.addParent(usePerm, true);
                         try {
                             plugin.getServer().getPluginManager().addPermission(usePerm);
@@ -131,7 +131,7 @@ public class ItemManager {
                 }
             }
             if (plugin.getConfig().getBoolean("permissions.craft")) {
-                Permission craftPerm = new Permission("skullitems.item." + id.toLowerCase() + ".craft");
+                Permission craftPerm = new Permission("specialitems.item." + id.toLowerCase() + ".craft");
                 try {
                     plugin.getServer().getPluginManager().addPermission(craftPerm);
                 } catch (IllegalArgumentException e) {
@@ -139,7 +139,7 @@ public class ItemManager {
                 }
             }
             if (plugin.getConfig().getBoolean("permissions.drop")) {
-                Permission dropPerm = new Permission("skullitems.item." + id.toLowerCase() + ".drop");
+                Permission dropPerm = new Permission("specialitems.item." + id.toLowerCase() + ".drop");
                 try {
                     plugin.getServer().getPluginManager().addPermission(dropPerm);
                 } catch (IllegalArgumentException e) {
@@ -155,16 +155,16 @@ public class ItemManager {
      * @param name The name of the skull item
      * @return A copy of the saved skull item. Use the manipulation methods to change configs!
      */
-    public SkullItem getSkullItem(String name) {
-        return new SkullItem(itemMap.get(name.toLowerCase()));
+    public SpecialItem getSkullItem(String name) {
+        return new SpecialItem(itemMap.get(name.toLowerCase()));
     }
 
     /**
-     * Get a the SkullItem object from an ItemStack
-     * @param item The ItemStack to get the SkullItem from
-     * @return The SkullItem or <tt>null</tt> if it isn't one or none was found with the encoded item name
+     * Get a the SpecialItem object from an ItemStack
+     * @param item The ItemStack to get the SpecialItem from
+     * @return The SpecialItem or <tt>null</tt> if it isn't one or none was found with the encoded item name
      */
-    public SkullItem getSkullItem(ItemStack item) throws IllegalArgumentException {
+    public SpecialItem getSkullItem(ItemStack item) throws IllegalArgumentException {
         if (!isSkullItem(item)) {
             return null;
         }
@@ -178,7 +178,7 @@ public class ItemManager {
     }
 
     public ItemStack getItem(String name) {
-        SkullItem skullItem = getSkullItem(name);
+        SpecialItem skullItem = getSkullItem(name);
         if (skullItem == null) {
             return null;
         }
@@ -256,17 +256,17 @@ public class ItemManager {
     /**
      * Execute all actions for a specific trigger on/with a player
      * @param player The player who triggered this skull item
-     * @param item the SkullItem
+     * @param item the SpecialItem
      * @param trigger The trigger
      * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
      */
-    public boolean executeActions(Player player, SkullItem item, ActionTrigger trigger) {
+    public boolean executeActions(Player player, SpecialItem item, ActionTrigger trigger) {
         boolean hasUsePerm = plugin.getConfig().getBoolean("permissions.use") // Config option perm for use is enabled
                 && !plugin.getConfig().getBoolean("permissions.usepertrigger") // Trigger has use as parent, no need to check use
-                && player.hasPermission("skullitems.item." + item.getId() + ".use");
+                && player.hasPermission("specialitems.item." + item.getId() + ".use");
         boolean hasTriggerPerm = !hasUsePerm // Only check if player doesn't already have usePerm
                 && plugin.getConfig().getBoolean("permissions.usepertrigger") // Only check if per trigger is enabled
-                && player.hasPermission("skullitems.item." + item.getId() + ".use." + trigger);
+                && player.hasPermission("specialitems.item." + item.getId() + ".use." + trigger);
         if (hasUsePerm || hasTriggerPerm) {
             return item.getActions().execute(trigger, player);
         } else {

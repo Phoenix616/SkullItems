@@ -1,4 +1,4 @@
-package de.themoep.skullitems.actions;
+package de.themoep.specialitems.actions;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)

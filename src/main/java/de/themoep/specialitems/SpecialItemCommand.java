@@ -1,4 +1,4 @@
-package de.themoep.skullitems;
+package de.themoep.specialitems;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,10 +19,10 @@ import org.bukkit.command.CommandSender;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class SkullItemCommand implements CommandExecutor {
-    private final SkullItems plugin;
+public class SpecialItemCommand implements CommandExecutor {
+    private final SpecialItems plugin;
 
-    public SkullItemCommand(SkullItems plugin) {
+    public SpecialItemCommand(SpecialItems plugin) {
         this.plugin = plugin;
     }
 

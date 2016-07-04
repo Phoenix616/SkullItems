@@ -1,4 +1,4 @@
-package de.themoep.skullitems.actions;
+package de.themoep.specialitems.actions;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -15,16 +15,27 @@ package de.themoep.skullitems.actions;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public enum ActionTrigger {
-    RIGHT_CLICK_HAND,
-    LEFT_CLICK_HAND,
-    MIDDLE_CLICK_HAND,
-    RIGHT_CLICK_INV,
-    SHIFT_RIGHT_CLICK_INV,
-    LEFT_CLICK_INV,
-    SHIFT_LEFT_CLICK_INV,
-    MIDDLE_CLICK_INV,
-    SHIFT_MIDDLE_CLICK_INV,
-    DROP,
-    UNSUPPORTED,
+enum ItemActionType {
+    OPEN_ENDERCHEST,
+    OPEN_CRAFTING,
+    OPEN_ENCHANTING,
+    OPEN_ANVIL,
+    RUN_COMMAND(true),
+    CONSOLE_COMMAND(true),
+    MESSAGE(true),
+    DONT_CANCEL;
+
+    private final boolean requiresValue;
+
+    ItemActionType(boolean requiresValue) {
+        this.requiresValue = requiresValue;
+    }
+
+    ItemActionType() {
+        this.requiresValue = false;
+    }
+
+    public boolean requiresValue() {
+        return requiresValue;
+    }
 }

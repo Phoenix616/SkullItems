@@ -1,8 +1,6 @@
-package de.themoep.skullitems;
+package de.themoep.specialitems;
 
-import de.themoep.skullitems.actions.ActionSet;
-import de.themoep.skullitems.actions.ActionTrigger;
-import org.bukkit.entity.Player;
+import de.themoep.specialitems.actions.ActionSet;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -22,14 +20,14 @@ import java.util.List;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public class SkullItem {
+public class SpecialItem {
     private String id;
     private String name;
     private ItemStack item;
     private ActionSet actions;
     private List<String> lore;
 
-    public SkullItem(String id, String name, ItemStack item, ActionSet actions, List<String> lore) {
+    public SpecialItem(String id, String name, ItemStack item, ActionSet actions, List<String> lore) {
         this.id = id.toLowerCase();
         this.name = name;
         this.item = item;
@@ -37,7 +35,7 @@ public class SkullItem {
         this.lore = lore;
     }
 
-    public SkullItem(SkullItem skullItem) {
+    public SpecialItem(SpecialItem skullItem) {
         this(skullItem.getId(), skullItem.getName(), skullItem.getItem(), skullItem.getActions(), skullItem.getLore());
     }
 

@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.themoep</groupId>
-    <artifactId>skullitems</artifactId>
+    <artifactId>specialitems</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <description>Bukkit plugin to add new items based on custom player skulls</description>
-    <name>SkullItems</name>
+    <description>Bukkit plugin to add special items, for example based on custom player skulls</description>
+    <name>SpecialItems</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,6 +1,6 @@
-package de.themoep.skullitems;
+package de.themoep.specialitems;
 
-import de.themoep.skullitems.listeners.ActionTriggerListener;
+import de.themoep.specialitems.listeners.ActionTriggerListener;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,13 +20,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
 
-public class SkullItems extends JavaPlugin {
+public class SpecialItems extends JavaPlugin {
 
     private ItemManager itemManager;
 
     public void onEnable() {
         loadConfig();
-        getCommand("skullitem").setExecutor(new SkullItemCommand(this));
+        getCommand("specialitems").setExecutor(new SpecialItemCommand(this));
         getServer().getPluginManager().registerEvents(new ActionTriggerListener(this), this);
     }
 

@@ -1,4 +1,4 @@
-package de.themoep.skullitems.actions;
+package de.themoep.specialitems.actions;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
