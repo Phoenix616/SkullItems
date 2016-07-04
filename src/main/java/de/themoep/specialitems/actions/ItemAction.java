@@ -73,6 +73,41 @@ class ItemAction {
         return value;
     }
 
+    /**
+     * Get the value and replace some tags for that specific player
+     * @param player The player to get the value for
+     * @return The value with all variables replaced
+     */
+    public String getValue(Player player) {
+        String value = getValue();
+        if (value.indexOf('%') == -1) {
+            // No percentage sign for variables in value string found,
+            // just return the normal value without doing all the other stuff
+            return value;
+        }
+        String[] repl = {
+                "player", player.getName(),
+                "x", Integer.toString(player.getLocation().getBlockX()),
+                "y", Integer.toString(player.getLocation().getBlockY()),
+                "t", Integer.toString(player.getLocation().getBlockZ()),
+                "xexact", Double.toString(player.getLocation().getX()),
+                "yexact", Double.toString(player.getLocation().getY()),
+                "texact", Double.toString(player.getLocation().getZ()),
+                "xeye", Double.toString(player.getEyeLocation().getBlockX()),
+                "yeye", Double.toString(player.getEyeLocation().getBlockY()),
+                "teye", Double.toString(player.getEyeLocation().getBlockZ()),
+                "xexacteye", Double.toString(player.getEyeLocation().getX()),
+                "yexacteye", Double.toString(player.getEyeLocation().getY()),
+                "texacteye", Double.toString(player.getEyeLocation().getZ()),
+                "pitch", Float.toString(player.getEyeLocation().getPitch()),
+                "yaw", Float.toString(player.getEyeLocation().getYaw()),
+        };
+        for (int i = 0; i + 1 < repl.length; i += 2) {
+            value = value.replace("%" + repl[i] + "%", repl[i+2]);
+        }
+        return value;
+    }
+
     public boolean hasValue() {
         return !value.isEmpty();
     }
@@ -106,22 +141,20 @@ class ItemAction {
                 break;
             case RUN_COMMAND:
                 if (hasValue()) {
-                    player.performCommand(getValue().replace("%player%", player.getName()));
+                    player.performCommand(getValue(player));
                 }
                 break;
             case CONSOLE_COMMAND:
                 if (hasValue()) {
                     player.getServer().dispatchCommand(
                             player.getServer().getConsoleSender(),
-                            getValue().replace("%player%", player.getName())
+                            getValue(player)
                     );
                 }
                 break;
             case MESSAGE:
                 if (hasValue()) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                            getValue().replace("%player%", player.getName())
-                    ));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', getValue(player)));
                 }
         }
         return cancel;
