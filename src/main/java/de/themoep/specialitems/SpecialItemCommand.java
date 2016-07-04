@@ -35,7 +35,7 @@ public class SpecialItemCommand implements CommandExecutor {
             if ("reload".equalsIgnoreCase(args[0])) {
                 if (plugin.checkPerm(sender, "specialitems.command.reload")) {
                     plugin.loadConfig();
-                    sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + "Config reloaded!");
+                    sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + " Config reloaded!");
                 }
             } else if ("list".equalsIgnoreCase(args[0])) {
                 if (plugin.checkPerm(sender, "specialitems.command.list")) {
@@ -63,7 +63,7 @@ public class SpecialItemCommand implements CommandExecutor {
                                 if (plugin.checkPerm(sender, "specialitems.command.give.others")) {
                                     player = plugin.getServer().getPlayer(args[2]);
                                     if (player == null || !player.isOnline()) {
-                                        sender.sendMessage(plugin.getTag() + ChatColor.RED + "No player with the name "
+                                        sender.sendMessage(plugin.getTag() + ChatColor.RED + " No player with the name "
                                                 + ChatColor.YELLOW + args[2] + ChatColor.RED + " found!");
                                         return true;
                                     }
@@ -81,18 +81,18 @@ public class SpecialItemCommand implements CommandExecutor {
 
                             if (player.getInventory().addItem(item).size() > 0) {
                                 sender.sendMessage(plugin.getTag() + ChatColor.RED
-                                        + "Could not give item as you don't have any space iny our inventory!");
+                                        + " Could not give item as you don't have any space iny our inventory!");
                             } else {
-                                sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + "Gave "
+                                sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + " Gave "
                                         + ChatColor.RESET + item.getItemMeta().getDisplayName()
                                         + ChatColor.YELLOW + " to " + ChatColor.RESET + player.getName());
                             }
                         } else {
-                            sender.sendMessage(plugin.getTag() + ChatColor.RED + "No item for the name "
+                            sender.sendMessage(plugin.getTag() + ChatColor.RED + " No item for the name "
                                     + ChatColor.YELLOW + args[1] + ChatColor.YELLOW + " configured!");
                         }
                     } else {
-                        sender.sendMessage(plugin.getTag() + ChatColor.RED + "Usage: /" + label + " get <itemname>");
+                        sender.sendMessage(plugin.getTag() + ChatColor.RED + " Usage: /" + label + " get <itemname>");
                     }
                 }
             } else if ("set".equals(args[0])) {
@@ -106,14 +106,14 @@ public class SpecialItemCommand implements CommandExecutor {
                                     try {
                                         value = new ItemStack(Material.valueOf(args[3].toUpperCase()));
                                     } catch (IllegalArgumentException e) {
-                                        sender.sendMessage(plugin.getTag() + ChatColor.RED + "No material with the name "
+                                        sender.sendMessage(plugin.getTag() + ChatColor.RED + " No material with the name "
                                                 + ChatColor.YELLOW + args[3] + ChatColor.YELLOW + " found!");
                                     }
                                 } else if (sender instanceof Player) {
                                     value = ((Player) sender).getInventory().getItemInHand();
                                 } else {
                                     sender.sendMessage(plugin.getTag() + ChatColor.RED
-                                            + "Use /" + label + " set <itemname> item <material> " +
+                                            + " Use /" + label + " set <itemname> item <material> " +
                                             "to set the item from the console!");
                                     return true;
                                 }
@@ -126,7 +126,7 @@ public class SpecialItemCommand implements CommandExecutor {
                                     value = sb.toString();
                                 } else {
                                     sender.sendMessage(plugin.getTag() + ChatColor.RED
-                                            + "Use /" + label + " set <itemname> displayname <name> " +
+                                            + " Use /" + label + " set <itemname> displayname <name> " +
                                             "to set the displayname!");
                                     return true;
                                 }
@@ -134,16 +134,16 @@ public class SpecialItemCommand implements CommandExecutor {
 
                             if (value != null) {
                                 plugin.getItemManager().setValue(item.getId(), args[2], value);
-                                sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + "Set " + args[2]
+                                sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + " Set " + args[2]
                                         + " for " + item.getId() + "!");
                             }
                         } else {
-                            sender.sendMessage(plugin.getTag() + ChatColor.RED + "No item with the name "
+                            sender.sendMessage(plugin.getTag() + ChatColor.RED + " No item with the name "
                                     + ChatColor.YELLOW + args[1] + ChatColor.YELLOW + " found!");
                             return true;
                         }
                     }
-                    sender.sendMessage(plugin.getTag() + ChatColor.RED + "Usage: /" + label + " set <itemname> [item|displayname] [<value>]");
+                    sender.sendMessage(plugin.getTag() + ChatColor.RED + " Usage: /" + label + " set <itemname> [item|displayname] [<value>]");
                 }
             } else {
                 return false;
