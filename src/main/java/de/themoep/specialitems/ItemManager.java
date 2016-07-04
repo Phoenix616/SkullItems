@@ -88,7 +88,7 @@ public class ItemManager {
                 try {
                     String recipeType = recipeSection.getString("type");
                     if ("shapeless".equalsIgnoreCase(recipeType)) {
-                        recipe = new ShapelessRecipe(item.getItem());
+                        recipe = new ShapelessRecipe(getItemStack(item));
                         for (String matStr : recipeSection.getConfigurationSection("materials").getKeys(false)) {
                             Material mat = Material.valueOf(matStr.toUpperCase());
                             ((ShapelessRecipe) recipe).addIngredient(
@@ -96,7 +96,7 @@ public class ItemManager {
                             );
                         }
                     } else if ("shaped".equalsIgnoreCase(recipeType)) {
-                        recipe = new ShapedRecipe(item.getItem());
+                        recipe = new ShapedRecipe(getItemStack(item));
                         for (String rKey : recipeSection.getConfigurationSection("keys").getKeys(false)) {
                             if (rKey.length() > 1) {
                                 throw new IllegalArgumentException(
@@ -109,7 +109,7 @@ public class ItemManager {
                         List<String> shape = recipeSection.getStringList("shape");
                         ((ShapedRecipe) recipe).shape(shape.toArray(new String[shape.size()]));
                     } else if ("furnace".equalsIgnoreCase(recipeType)) {
-                        recipe = new FurnaceRecipe(item.getItem(), Material.valueOf(recipeSection.getString("input")));
+                        recipe = new FurnaceRecipe(getItemStack(item), Material.valueOf(recipeSection.getString("input")));
                         ((FurnaceRecipe) recipe).setExperience((float) recipeSection.getDouble("exp"));
                     } else {
                         throw new IllegalArgumentException(recipeType + " is not a supported or valid recipe type!");
@@ -194,12 +194,15 @@ public class ItemManager {
         return getSpecialItem(hidden);
     }
 
-    public ItemStack getItem(String name) {
+    public ItemStack getItemStack(String name) {
         SpecialItem specialItem = getSpecialItem(name);
         if (specialItem == null) {
             return null;
         }
+        return getItemStack(specialItem);
+    }
 
+    public ItemStack getItemStack(SpecialItem specialItem) {
         ItemStack item = specialItem.getItem();
         if (item == null) {
             return null;
@@ -212,7 +215,7 @@ public class ItemManager {
         for (String line : specialItem.getLore()) {
             lore.add(ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', line));
         }
-        lore.add(hideString(name.toLowerCase(), ChatColor.BLUE + "" + ChatColor.ITALIC + plugin.getName()));
+        lore.add(hideString(specialItem.getId(), ChatColor.BLUE + "" + ChatColor.ITALIC + plugin.getName()));
         meta.setLore(lore);
 
         item.setItemMeta(meta);

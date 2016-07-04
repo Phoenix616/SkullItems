@@ -61,7 +61,7 @@ public class SpecialItemCommand implements CommandExecutor {
             } else if ("get".equalsIgnoreCase(args[0])) {
                 if (plugin.checkPerm(sender, "specialitems.command.get")) {
                     if (args.length > 1) {
-                        ItemStack item = plugin.getItemManager().getItem(args[1]);
+                        ItemStack item = plugin.getItemManager().getItemStack(args[1]);
                         if (item != null) {
                             Player player = null;
                             if (args.length > 2) {
