@@ -73,7 +73,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    //@EventHandler(ignoreCancelled = true)
     public void onPlayerInventoryClick(InventoryClickEvent event) {
         if (event.getCurrentItem() == null || !(event.getWhoClicked() instanceof Player)) {
             return;
