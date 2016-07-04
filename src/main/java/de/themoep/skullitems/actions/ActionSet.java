@@ -1,5 +1,6 @@
 package de.themoep.skullitems.actions;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -126,6 +127,12 @@ public class ActionSet {
                         );
                     }
                     break;
+                case MESSAGE:
+                    if (action.hasValue()) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                action.getValue().replace("%player%", player.getName())
+                        ));
+                    }
             }
         }
         return cancel;
