@@ -4,6 +4,8 @@ permissions:
   usepertrigger: false
   drop: false
   craft: false
+lang:
+  nopermission: &cYou don't have the permission to use this item!
 items:
   workbench:
     name: Mini Craftingtable

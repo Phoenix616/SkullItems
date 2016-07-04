@@ -269,6 +269,8 @@ public class ItemManager {
                 && player.hasPermission("skullitems.item." + item.getId() + ".use." + trigger);
         if (hasUsePerm || hasTriggerPerm) {
             return item.getActions().execute(trigger, player);
+        } else {
+            player.sendMessage(plugin.getLang("lang.nopermission"));
         }
         return true;
     }

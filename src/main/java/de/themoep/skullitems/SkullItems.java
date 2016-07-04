@@ -1,6 +1,7 @@
 package de.themoep.skullitems;
 
 import de.themoep.skullitems.listeners.ItemInteractListener;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -37,5 +38,16 @@ public class SkullItems extends JavaPlugin {
 
     public ItemManager getItemManager() {
         return itemManager;
+    }
+
+    public String getLang(String key, String... repl) {
+        String msg =  getConfig().getString("lang." + key);
+        if(msg == null) {
+            return ChatColor.RED + getName() + ": Unknown language key " + ChatColor.GOLD + key;
+        }
+        for(int i = 0; i + 1 < repl.length; i += 2) {
+            msg = msg.replace("%" + repl[i] + "%", repl[i + 1]);
+        }
+        return ChatColor.translateAlternateColorCodes('&', msg);
     }
 }
