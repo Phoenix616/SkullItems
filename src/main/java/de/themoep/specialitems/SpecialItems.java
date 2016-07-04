@@ -44,7 +44,7 @@ public class SpecialItems extends JavaPlugin {
     public String getLang(String key, String... repl) {
         String msg =  getConfig().getString("lang." + key);
         if(msg == null) {
-            return ChatColor.RED + getName() + ": Unknown language key " + ChatColor.GOLD + key;
+            return getTag() + ChatColor.RED + ": Unknown language key " + ChatColor.GOLD + key;
         }
         for(int i = 0; i + 1 < repl.length; i += 2) {
             msg = msg.replace("%" + repl[i] + "%", repl[i + 1]);
