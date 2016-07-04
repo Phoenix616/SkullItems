@@ -207,9 +207,9 @@ public class ItemManager {
 
         List<String> lore = new ArrayList<>();
         for (String line : specialItem.getLore()) {
-            lore.add(ChatColor.translateAlternateColorCodes('&', line));
+            lore.add(ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', line));
         }
-        lore.add(hideString(name.toLowerCase(), ChatColor.BLUE + plugin.getName()));
+        lore.add(hideString(name.toLowerCase(), ChatColor.BLUE + "" + ChatColor.ITALIC + plugin.getName()));
         meta.setLore(lore);
 
         item.setItemMeta(meta);
