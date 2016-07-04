@@ -36,7 +36,7 @@ public class SpecialItem {
     }
 
     public SpecialItem(SpecialItem item) {
-        this(item.getId(), item.getName(), item.getItem(), item.getActions(), item.getLore());
+        this(item.getId(), item.getName(), item.getItem(), item.getActionSet(), item.getLore());
     }
 
     public String getId() {
@@ -55,7 +55,7 @@ public class SpecialItem {
         return lore;
     }
 
-    public ActionSet getActions() {
+    public ActionSet getActionSet() {
         return actions;
     }
 }

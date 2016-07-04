@@ -169,10 +169,10 @@ public class SpecialItemCommand implements CommandExecutor {
                             for (String line : item.getLore()) {
                                 sender.sendMessage(" - " + line);
                             }
-                            if (item.getActions().size() > 0) {
+                            if (item.getActionSet().size() > 0) {
                                 sender.sendMessage(ChatColor.YELLOW + " Actions:");
                             }
-                            for (Map.Entry<ActionTrigger, List<ItemAction>> entry : item.getActions().entrySet()) {
+                            for (Map.Entry<ActionTrigger, List<ItemAction>> entry : item.getActionSet().entrySet()) {
                                 sender.sendMessage(" - " + entry.getKey() + ":");
                                 for (ItemAction action : entry.getValue()) {
                                     sender.sendMessage("   - " + action);

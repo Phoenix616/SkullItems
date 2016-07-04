@@ -287,7 +287,7 @@ public class ItemManager {
                 && plugin.getConfig().getBoolean("permissions.usepertrigger") // Only check if per trigger is enabled
                 && player.hasPermission("specialitems.item." + item.getId() + ".use." + trigger);
         if (hasUsePerm || hasTriggerPerm) {
-            return item.getActions().execute(trigger, player);
+            return item.getActionSet().execute(trigger, player);
         } else {
             player.sendMessage(plugin.getLang("lang.nopermission"));
         }
