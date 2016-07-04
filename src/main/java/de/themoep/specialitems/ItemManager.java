@@ -289,7 +289,7 @@ public class ItemManager {
         if (hasUsePerm || hasTriggerPerm) {
             return item.getActionSet().execute(trigger, player);
         } else {
-            player.sendMessage(plugin.getLang("lang.nopermission"));
+            player.sendMessage(plugin.getLang("nopermission"));
         }
         return true;
     }
