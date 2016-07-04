@@ -201,6 +201,9 @@ public class ItemManager {
         }
 
         ItemStack item = specialItem.getItem();
+        if (item == null) {
+            return null;
+        }
         ItemMeta meta = item.getItemMeta();
 
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', specialItem.getName()));

@@ -88,8 +88,8 @@ public class SpecialItemCommand implements CommandExecutor {
                                         + ChatColor.YELLOW + " to " + ChatColor.RESET + player.getName());
                             }
                         } else {
-                            sender.sendMessage(plugin.getTag() + ChatColor.RED + "No item with the name "
-                                    + ChatColor.YELLOW + args[1] + ChatColor.YELLOW + " found!");
+                            sender.sendMessage(plugin.getTag() + ChatColor.RED + "No item for the name "
+                                    + ChatColor.YELLOW + args[1] + ChatColor.YELLOW + " configured!");
                         }
                     } else {
                         sender.sendMessage(plugin.getTag() + ChatColor.RED + "Usage: /" + label + " get <itemname>");
