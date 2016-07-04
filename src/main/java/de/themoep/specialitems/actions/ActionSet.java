@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -95,5 +96,13 @@ public class ActionSet {
             cancel = cancel & action.execute(player);
         }
         return cancel;
+    }
+
+    public int size() {
+        return actionMap.size();
+    }
+
+    public Set<Map.Entry<ActionTrigger, List<ItemAction>>> entrySet() {
+        return actionMap.entrySet();
     }
 }

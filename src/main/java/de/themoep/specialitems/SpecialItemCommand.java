@@ -1,5 +1,7 @@
 package de.themoep.specialitems;
 
+import de.themoep.specialitems.actions.ActionTrigger;
+import de.themoep.specialitems.actions.ItemAction;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -7,6 +9,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -74,7 +79,7 @@ public class SpecialItemCommand implements CommandExecutor {
                                 player = (Player) sender;
                             } else {
                                 sender.sendMessage(plugin.getTag() + ChatColor.RED
-                                        + "Use /" + label + " get <itemname> <playername> " +
+                                        + " Use /" + label + " get <itemname> <playername> " +
                                         "to give a special item to a player from the console!");
                                 return true;
                             }
@@ -134,8 +139,9 @@ public class SpecialItemCommand implements CommandExecutor {
 
                             if (value != null) {
                                 plugin.getItemManager().setValue(item.getId(), args[2], value);
-                                sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + " Set " + args[2]
-                                        + " for " + item.getId() + "!");
+                                sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + " Set "
+                                        + ChatColor.RESET + args[2] + ChatColor.YELLOW + " for "
+                                        + ChatColor.RESET + item.getId() + ChatColor.YELLOW + "!");
                                 return true;
                             }
                         } else {
@@ -145,6 +151,41 @@ public class SpecialItemCommand implements CommandExecutor {
                         }
                     }
                     sender.sendMessage(plugin.getTag() + ChatColor.RED + " Usage: /" + label + " set <itemname> [item|displayname] [<value>]");
+                }
+
+            } else if ("info".equals(args[0])) {
+                if (plugin.checkPerm(sender, "specialitems.command.info")) {
+                    if (args.length > 1) {
+                        SpecialItem item = plugin.getItemManager().getSpecialItem(args[1]);
+                        if (item != null) {
+                            sender.sendMessage( new String[]{
+                                    ChatColor.YELLOW + "Info for " + ChatColor.RESET + args[1] + ChatColor.YELLOW + ":",
+                                    ChatColor.YELLOW + " Type: " + ChatColor.RESET + item.getItem().getType(),
+                                    ChatColor.YELLOW + " Displayname: " + ChatColor.RESET + item.getName(),
+                            });
+                            if (item.getLore().size() > 0) {
+                                sender.sendMessage(ChatColor.YELLOW + " Lore: ");
+                            }
+                            for (String line : item.getLore()) {
+                                sender.sendMessage(" - " + line);
+                            }
+                            if (item.getActions().size() > 0) {
+                                sender.sendMessage(ChatColor.YELLOW + " Actions:");
+                            }
+                            for (Map.Entry<ActionTrigger, List<ItemAction>> entry : item.getActions().entrySet()) {
+                                sender.sendMessage(" - " + entry.getKey() + ":");
+                                for (ItemAction action : entry.getValue()) {
+                                    sender.sendMessage("   - " + action);
+                                }
+                            }
+                        } else {
+                            sender.sendMessage(plugin.getTag() + ChatColor.RED + " No item with the name "
+                                    + ChatColor.YELLOW + args[1] + ChatColor.YELLOW + " found!");
+                            return true;
+                        }
+                    } else {
+                        sender.sendMessage(plugin.getTag() + ChatColor.RED + " Usage: /" + label + " info <itemname>");
+                    }
                 }
             } else {
                 return false;
