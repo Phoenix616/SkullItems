@@ -270,6 +270,6 @@ public class ItemManager {
         if (hasUsePerm || hasTriggerPerm) {
             return item.getActions().execute(trigger, player);
         }
-        return false;
+        return true;
     }
 }
