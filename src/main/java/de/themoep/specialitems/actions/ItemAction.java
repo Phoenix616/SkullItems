@@ -19,7 +19,7 @@ import org.bukkit.event.inventory.InventoryType;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-class ItemAction {
+public class ItemAction {
     private final ItemActionType type;
     private final String value;
 
