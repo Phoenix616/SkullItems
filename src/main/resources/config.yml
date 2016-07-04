@@ -11,13 +11,13 @@ items:
     displayname: Mini Craftingtable
     lore:
     - Rightclick to open crafting interface
-    action:
+    actions:
       RIGHT_CLICK_HAND:
       - OPEN_CRAFTING
   enderchest:
     displayname: Mini Enderchest
     lore:
     - Rightclick to open your enderchest
-    action:
+    actions:
       RIGHT_CLICK_HAND:
       - OPEN_ENDERCHEST

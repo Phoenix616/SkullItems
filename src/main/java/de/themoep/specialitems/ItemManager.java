@@ -76,7 +76,7 @@ public class ItemManager {
                     id,
                     itemSection.getString("displayname"),
                     itemSection.getItemStack("item"),
-                    new ActionSet(itemSection.getConfigurationSection("action")),
+                    new ActionSet(itemSection.getConfigurationSection("actions")),
                     itemSection.getStringList("lore")
             );
             itemMap.put(item.getId(), item);
@@ -303,7 +303,7 @@ public class ItemManager {
                     item.getId(),
                     itemSection.getString("displayname"),
                     itemSection.getItemStack("item"),
-                    new ActionSet(itemSection.getConfigurationSection("action")),
+                    new ActionSet(itemSection.getConfigurationSection("actions")),
                     itemSection.getStringList("lore")
             );
             itemMap.put(item.getId(), item);
