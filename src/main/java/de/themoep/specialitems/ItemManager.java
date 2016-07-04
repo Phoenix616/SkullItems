@@ -43,7 +43,7 @@ public class ItemManager {
     public ItemManager(SpecialItems plugin) {
         this.plugin = plugin;
         int itemsLoaded = loadItems();
-        plugin.getLogger().log(Level.INFO, itemsLoaded + " skull items loaded!");
+        plugin.getLogger().log(Level.INFO, itemsLoaded + " special items loaded!");
     }
 
     /**
@@ -54,7 +54,7 @@ public class ItemManager {
         itemMap = new HashMap<>();
         ConfigurationSection items = plugin.getConfig().getConfigurationSection("items");
         if (items == null || items.getKeys(false).size() == 0) {
-            plugin.getLogger().log(Level.WARNING, "No skull items configured?");
+            plugin.getLogger().log(Level.WARNING, "No special items configured?");
             return 0;
         }
         for (String id : items.getKeys(false)) {
@@ -155,7 +155,7 @@ public class ItemManager {
      * @param name The name of the skull item
      * @return A copy of the saved skull item. Use the manipulation methods to change configs!
      */
-    public SpecialItem getSkullItem(String name) {
+    public SpecialItem getSpecialItem(String name) {
         return new SpecialItem(itemMap.get(name.toLowerCase()));
     }
 
@@ -164,32 +164,32 @@ public class ItemManager {
      * @param item The ItemStack to get the SpecialItem from
      * @return The SpecialItem or <tt>null</tt> if it isn't one or none was found with the encoded item name
      */
-    public SpecialItem getSkullItem(ItemStack item) throws IllegalArgumentException {
-        if (!isSkullItem(item)) {
+    public SpecialItem getSpecialItem(ItemStack item) throws IllegalArgumentException {
+        if (!isSpecialItem(item)) {
             return null;
         }
 
         String hidden = getHiddenString(item);
         if (hidden == null) {
-            throw new IllegalArgumentException("Item should be skull item but no hidden string was found?");
+            throw new IllegalArgumentException("Item should be a special item but no hidden id string was found?");
         }
 
-        return getSkullItem(hidden);
+        return getSpecialItem(hidden);
     }
 
     public ItemStack getItem(String name) {
-        SpecialItem skullItem = getSkullItem(name);
-        if (skullItem == null) {
+        SpecialItem specialItem = getSpecialItem(name);
+        if (specialItem == null) {
             return null;
         }
 
-        ItemStack item = skullItem.getItem();
+        ItemStack item = specialItem.getItem();
         ItemMeta meta = item.getItemMeta();
 
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', skullItem.getName()));
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', specialItem.getName()));
 
         List<String> lore = new ArrayList<>();
-        for (String line : skullItem.getLore()) {
+        for (String line : specialItem.getLore()) {
             lore.add(ChatColor.translateAlternateColorCodes('&', line));
         }
         lore.add(hideString(name.toLowerCase(), ChatColor.BLUE + plugin.getName()));
@@ -246,9 +246,8 @@ public class ItemManager {
         return builder.toString();
     }
 
-    public boolean isSkullItem(ItemStack item) {
-        return item.getType() == Material.SKULL_ITEM
-                && item.hasItemMeta()
+    public boolean isSpecialItem(ItemStack item) {
+        return item.hasItemMeta()
                 && item.getItemMeta().hasLore()
                 && ChatColor.stripColor(item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1)).equals(plugin.getName());
     }

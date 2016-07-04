@@ -43,7 +43,7 @@ public class ActionTriggerListener implements Listener {
 
         boolean cancel = true;
         try {
-            SpecialItem item = plugin.getItemManager().getSkullItem(event.getItem());
+            SpecialItem item = plugin.getItemManager().getSpecialItem(event.getItem());
             if (item == null) {
                 return;
             }
@@ -81,7 +81,7 @@ public class ActionTriggerListener implements Listener {
 
         boolean cancel = true;
         try {
-            SpecialItem item = plugin.getItemManager().getSkullItem(event.getCurrentItem());
+            SpecialItem item = plugin.getItemManager().getSpecialItem(event.getCurrentItem());
             if (item == null) {
                 return;
             }
@@ -125,7 +125,7 @@ public class ActionTriggerListener implements Listener {
     public void onItemDrop(PlayerDropItemEvent event) {
         boolean cancel = true;
         try {
-            SpecialItem item = plugin.getItemManager().getSkullItem(event.getItemDrop().getItemStack());
+            SpecialItem item = plugin.getItemManager().getSpecialItem(event.getItemDrop().getItemStack());
             if (item == null) {
                 return;
             }

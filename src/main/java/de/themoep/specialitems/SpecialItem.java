@@ -35,8 +35,8 @@ public class SpecialItem {
         this.lore = lore;
     }
 
-    public SpecialItem(SpecialItem skullItem) {
-        this(skullItem.getId(), skullItem.getName(), skullItem.getItem(), skullItem.getActions(), skullItem.getLore());
+    public SpecialItem(SpecialItem item) {
+        this(item.getId(), item.getName(), item.getItem(), item.getActions(), item.getLore());
     }
 
     public String getId() {
