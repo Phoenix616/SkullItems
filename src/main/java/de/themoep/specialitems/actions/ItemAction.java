@@ -1,5 +1,9 @@
 package de.themoep.specialitems.actions;
 
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
  * <p/>
@@ -71,5 +75,55 @@ class ItemAction {
 
     public boolean hasValue() {
         return !value.isEmpty();
+    }
+
+    /**
+     * Execute an actions for on/with a player
+     * @param player The player who triggered this special item
+     * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
+     */
+    public boolean execute(Player player) {
+        boolean cancel = true;
+        switch (getType()) {
+            case DONT_CANCEL:
+                cancel = false;
+                break;
+            case OPEN_CRAFTING:
+                player.closeInventory();
+                player.openWorkbench(null, true);
+                break;
+            case OPEN_ENDERCHEST:
+                player.closeInventory();
+                player.openInventory(player.getEnderChest());
+                break;
+            case OPEN_ENCHANTING:
+                player.closeInventory();
+                player.openEnchanting(null, true);
+                break;
+            case OPEN_ANVIL:
+                player.closeInventory();
+                player.openInventory(player.getServer().createInventory(null, InventoryType.ANVIL));
+                break;
+            case RUN_COMMAND:
+                if (hasValue()) {
+                    player.performCommand(getValue().replace("%player%", player.getName()));
+                }
+                break;
+            case CONSOLE_COMMAND:
+                if (hasValue()) {
+                    player.getServer().dispatchCommand(
+                            player.getServer().getConsoleSender(),
+                            getValue().replace("%player%", player.getName())
+                    );
+                }
+                break;
+            case MESSAGE:
+                if (hasValue()) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                            getValue().replace("%player%", player.getName())
+                    ));
+                }
+        }
+        return cancel;
     }
 }

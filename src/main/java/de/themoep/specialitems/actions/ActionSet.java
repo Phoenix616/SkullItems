@@ -1,9 +1,7 @@
 package de.themoep.specialitems.actions;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,52 +86,13 @@ public class ActionSet {
     /**
      * Execute all actions for a specific trigger on/with a player
      * @param trigger The trigger
-     * @param player The player who triggered this skull item
+     * @param player The player who triggered this special item
      * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
      */
     public boolean execute(ActionTrigger trigger, Player player) {
         boolean cancel = true;
         for (ItemAction action : getActions(trigger)) {
-            switch (action.getType()) {
-                case DONT_CANCEL:
-                    cancel = false;
-                    break;
-                case OPEN_CRAFTING:
-                    player.closeInventory();
-                    player.openWorkbench(null, true);
-                    break;
-                case OPEN_ENDERCHEST:
-                    player.closeInventory();
-                    player.openInventory(player.getEnderChest());
-                    break;
-                case OPEN_ENCHANTING:
-                    player.closeInventory();
-                    player.openEnchanting(null, true);
-                    break;
-                case OPEN_ANVIL:
-                    player.closeInventory();
-                    player.openInventory(player.getServer().createInventory(null, InventoryType.ANVIL));
-                    break;
-                case RUN_COMMAND:
-                    if (action.hasValue()) {
-                        player.performCommand(action.getValue().replace("%player%", player.getName()));
-                    }
-                    break;
-                case CONSOLE_COMMAND:
-                    if (action.hasValue()) {
-                        player.getServer().dispatchCommand(
-                                player.getServer().getConsoleSender(),
-                                action.getValue().replace("%player%", player.getName())
-                        );
-                    }
-                    break;
-                case MESSAGE:
-                    if (action.hasValue()) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                action.getValue().replace("%player%", player.getName())
-                        ));
-                    }
-            }
+            cancel = cancel & action.execute(player);
         }
         return cancel;
     }
