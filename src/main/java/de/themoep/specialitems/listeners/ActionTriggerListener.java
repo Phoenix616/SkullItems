@@ -85,6 +85,24 @@ public class ActionTriggerListener implements Listener {
             case MIDDLE:
                 trigger = ActionTrigger.MIDDLE_CLICK_INV;
                 break;
+            case DOUBLE_CLICK:
+                trigger = ActionTrigger.DOUBLE_CLICK_INV;
+                break;
+            case DROP:
+                trigger = ActionTrigger.DROP_INV;
+                break;
+            case CONTROL_DROP:
+                trigger = ActionTrigger.CONTROL_DROP_INV;
+                break;
+            case WINDOW_BORDER_LEFT:
+                trigger = ActionTrigger.LEFT_BORDER_INV;
+                break;
+            case WINDOW_BORDER_RIGHT:
+                trigger = ActionTrigger.RIGHT_BORDER_INV;
+                break;
+            case NUMBER_KEY:
+                trigger = ActionTrigger.valueOf("NUMBER_KEY_" + (event.getHotbarButton() + 1) + " + _INV");
+                break;
         }
 
         if (trigger == ActionTrigger.UNSUPPORTED) {
