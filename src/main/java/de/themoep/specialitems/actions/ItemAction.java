@@ -155,6 +155,9 @@ public class ItemAction {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', getValue(player)));
                 }
                 break;
+            case REMOVE_ITEM:
+                trigger.setRemoveItem(true);
+                break;
             case DONT_CANCEL:
             default:
                 trigger.setCancel(false);

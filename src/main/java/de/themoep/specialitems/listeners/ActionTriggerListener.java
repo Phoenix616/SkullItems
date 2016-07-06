@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -59,6 +60,34 @@ public class ActionTriggerListener implements Listener {
         plugin.getItemManager().executeActions(trigger);
         if (trigger.shouldCancel()) {
             event.setCancelled(true);
+        }
+        if (trigger.shouldRemoveItem() && event.getHand() != null) {
+            ItemStack item = null;
+            if (event.getItem().getAmount() > 1) {
+                item = event.getItem();
+                item.setAmount(event.getItem().getAmount() - 1);
+            }
+            switch (event.getHand()) {
+                case HAND:
+                    event.getPlayer().getInventory().setItem(event.getPlayer().getInventory().getHeldItemSlot(), item);
+                    break;
+                case OFF_HAND:
+                    event.getPlayer().getInventory().setItemInOffHand(item);
+                    break;
+                case HEAD:
+                    event.getPlayer().getInventory().setHelmet(item);
+                    break;
+                case CHEST:
+                    event.getPlayer().getInventory().setChestplate(item);
+                    break;
+                case LEGS:
+                    event.getPlayer().getInventory().setLeggings(item);
+                    break;
+                case FEET:
+                    event.getPlayer().getInventory().setBoots(item);
+                    break;
+            }
+            event.getPlayer().updateInventory();
         }
     }
 
@@ -114,6 +143,15 @@ public class ActionTriggerListener implements Listener {
         if (trigger.shouldCancel()) {
             event.setCancelled(true);
         }
+        if (trigger.shouldRemoveItem()) {
+            ItemStack item = null;
+            if (event.getCurrentItem().getAmount() > 1) {
+                item = event.getCurrentItem();
+                item.setAmount(event.getCurrentItem().getAmount() - 1);
+            }
+            event.setCurrentItem(item);
+            ((Player) event.getWhoClicked()).updateInventory();
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -122,6 +160,10 @@ public class ActionTriggerListener implements Listener {
         plugin.getItemManager().executeActions(trigger);
         if (trigger.shouldCancel()) {
             event.setCancelled(true);
+        } else if (trigger.shouldRemoveItem()) {
+            // no nice way to remove dropped item if the event was cancelled
+            // TODO: Add info to documentation about that incompatibility!
+            event.getItemDrop().remove();
         }
     }
 
@@ -132,6 +174,15 @@ public class ActionTriggerListener implements Listener {
         if (trigger.shouldCancel()) {
             event.setCancelled(true);
         }
+        if (trigger.shouldRemoveItem()) {
+            ItemStack item = null;
+            if (event.getItem().getAmount() > 1) {
+                item = event.getItem();
+                item.setAmount(event.getItem().getAmount() - 1);
+            }
+            event.setItem(item);
+            event.getPlayer().updateInventory();
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -140,6 +191,15 @@ public class ActionTriggerListener implements Listener {
         plugin.getItemManager().executeActions(trigger);
         if (trigger.shouldCancel()) {
             event.setCancelled(true);
+        }
+        if (trigger.shouldRemoveItem()) {
+            ItemStack item = null;
+            if (event.getCurrentItem().getAmount() > 1) {
+                item = event.getCurrentItem();
+                item.setAmount(event.getCurrentItem().getAmount() - 1);
+            }
+            event.setCurrentItem(item);
+            ((Player) event.getWhoClicked()).updateInventory();
         }
     }
 }

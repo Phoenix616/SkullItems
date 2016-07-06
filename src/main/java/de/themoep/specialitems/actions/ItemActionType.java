@@ -23,6 +23,7 @@ enum ItemActionType {
     RUN_COMMAND(true),
     CONSOLE_COMMAND(true),
     MESSAGE(true),
+    REMOVE_ITEM,
     DONT_CANCEL;
 
     private final boolean requiresValue;

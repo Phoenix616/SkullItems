@@ -25,6 +25,7 @@ public class Trigger {
     private final ItemStack item;
     private final TriggerType type;
     private boolean cancel = false;
+    private boolean removeItem = false;
 
     /**
      * This object stores information about the trigger that will trigger actions
@@ -62,5 +63,13 @@ public class Trigger {
 
     public boolean shouldCancel() {
         return cancel;
+    }
+
+    public void setRemoveItem(boolean removeItem) {
+        this.removeItem = removeItem;
+    }
+
+    public boolean shouldRemoveItem() {
+        return removeItem;
     }
 }
