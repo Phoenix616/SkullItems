@@ -272,7 +272,8 @@ public class ItemManager {
     }
 
     public boolean isSpecialItem(ItemStack item) {
-        return item.hasItemMeta()
+        return item != null
+                && item.hasItemMeta()
                 && item.getItemMeta().hasLore()
                 && item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1).contains(plugin.getName());
     }
