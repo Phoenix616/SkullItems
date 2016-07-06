@@ -6,6 +6,7 @@ import de.themoep.specialitems.actions.ActionTrigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -73,7 +74,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    //@EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInventoryClick(InventoryClickEvent event) {
         if (event.getCurrentItem() == null || !(event.getWhoClicked() instanceof Player)) {
             return;
@@ -86,24 +87,22 @@ public class ActionTriggerListener implements Listener {
                 return;
             }
             ActionTrigger trigger = ActionTrigger.UNSUPPORTED;
-            if (event.isLeftClick()) {
-                if (event.isShiftClick()) {
-                    trigger = ActionTrigger.SHIFT_LEFT_CLICK_INV;
-                } else {
+            switch (event.getClick()) {
+                case LEFT:
                     trigger = ActionTrigger.LEFT_CLICK_INV;
-                }
-            } else if (event.isRightClick()) {
-                if (event.isShiftClick()) {
-                    trigger = ActionTrigger.SHIFT_RIGHT_CLICK_INV;
-                } else {
+                    break;
+                case SHIFT_LEFT:
+                    trigger = ActionTrigger.SHIFT_LEFT_CLICK_INV;
+                    break;
+                case RIGHT:
                     trigger = ActionTrigger.RIGHT_CLICK_INV;
-                }
-            } else if (event.getAction() == InventoryAction.CLONE_STACK) {
-                if (event.isShiftClick()) {
-                    trigger = ActionTrigger.SHIFT_MIDDLE_CLICK_INV;
-                } else {
+                    break;
+                case SHIFT_RIGHT:
+                    trigger = ActionTrigger.SHIFT_RIGHT_CLICK_INV;
+                    break;
+                case MIDDLE:
                     trigger = ActionTrigger.MIDDLE_CLICK_INV;
-                }
+                    break;
             }
 
             if (trigger == ActionTrigger.UNSUPPORTED) {

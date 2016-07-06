@@ -91,7 +91,7 @@ public class ActionSet {
      * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
      */
     public boolean execute(ActionTrigger trigger, Player player) {
-        boolean cancel = true;
+        boolean cancel = getActions(trigger).size() > 0;
         for (ItemAction action : getActions(trigger)) {
             cancel = cancel & action.execute(player);
         }
