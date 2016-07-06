@@ -1,11 +1,11 @@
 package de.themoep.specialitems;
 
 import de.themoep.specialitems.actions.ActionSet;
-import de.themoep.specialitems.actions.ActionTrigger;
+import de.themoep.specialitems.actions.TriggerType;
+import de.themoep.specialitems.actions.Trigger;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -132,7 +132,7 @@ public class ItemManager {
                     usePerm = plugin.getServer().getPluginManager().getPermission(usePerm.getName());
                 }
                 if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
-                    for (ActionTrigger trigger : ActionTrigger.values()) {
+                    for (TriggerType trigger : TriggerType.values()) {
                         Permission triggerPerm = new Permission("specialitems.item." + id.toLowerCase() + ".use." + trigger.toString().toLowerCase());
                         triggerPerm.addParent(usePerm, true);
                         try {
@@ -276,48 +276,38 @@ public class ItemManager {
     }
 
     /**
-     * Execute all actions for a specific trigger on/with a player
-     * @param player The player who triggered this skull item
-     * @param itemStack the item stack that may trigger stuff
-     * @param trigger The trigger
+     * Execute all actions for a specific trigger
+     * @param trigger The info about the trigger of this action
      * @return Whether or not the event that triggered this should be cancelled,
      * <tt>true</tt> if there are actions and the do not contain ItemActionType.DONT_CANCEL,
      * <tt>false</tt> if there are no actions
      */
-    public boolean executeActions(Player player, ItemStack itemStack, ActionTrigger trigger) {
+    public Trigger executeActions(Trigger trigger) {
         try {
-            SpecialItem item = plugin.getItemManager().getSpecialItem(itemStack);
-            if (item == null) {
-                return false;
+            SpecialItem item = getSpecialItem(trigger.getItem());
+            if (item != null) {
+                boolean hasPermission = true;
+                if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
+                    hasPermission = plugin.checkPerm(
+                            trigger.getPlayer(),
+                            "specialitems.item." + item.getId() + ".use." + trigger.toString().toLowerCase(),
+                            "use"
+                    );
+                } else if (plugin.getConfig().getBoolean("permissions.use")) {
+                    hasPermission = plugin.checkPerm(
+                            trigger.getPlayer(),
+                            "specialitems.item." + item.getId() + ".use",
+                            "use"
+                    );
+                }
+                if (hasPermission) {
+                    return item.getActionSet().execute(trigger);
+                }
             }
-
-            return plugin.getItemManager().executeActions(player, item, trigger);
         } catch (IllegalArgumentException e) {
-            plugin.getLogger().log(Level.WARNING, player.getName() + " has an invalid item! " + e.getMessage());
+            plugin.getLogger().log(Level.WARNING, trigger.getPlayer().getName() + " has an invalid item! " + e.getMessage());
         }
-        return false;
-    }
-
-    /**
-     * Execute all actions for a specific trigger on/with a player
-     * @param player The player who triggered this skull item
-     * @param item the SpecialItem
-     * @param trigger The trigger
-     * @return Whether or not the event that triggered this should be cancelled,
-     * <tt>true</tt> if there are actions and the do not contain ItemActionType.DONT_CANCEL,
-     * <tt>false</tt> if there are no actions
-     */
-    public boolean executeActions(Player player, SpecialItem item, ActionTrigger trigger) {
-        boolean hasPermission = true;
-        if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
-            hasPermission = plugin.checkPerm(player, "specialitems.item." + item.getId() + ".use." + trigger.toString().toLowerCase(), "use");
-        } else if (plugin.getConfig().getBoolean("permissions.use")) {
-            hasPermission = plugin.checkPerm(player, "specialitems.item." + item.getId() + ".use", "use");
-        }
-        if (hasPermission) {
-            return item.getActionSet().execute(trigger, player);
-        }
-        return true;
+        return trigger;
     }
 
     public void setValue(String id, String key, Object object) {

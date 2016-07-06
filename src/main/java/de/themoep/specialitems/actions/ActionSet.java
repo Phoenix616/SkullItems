@@ -1,7 +1,6 @@
 package de.themoep.specialitems.actions;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,17 +25,17 @@ import java.util.Set;
  */
 public class ActionSet {
 
-    private Map<ActionTrigger, List<ItemAction>> actionMap = new HashMap<>();
+    private Map<TriggerType, List<ItemAction>> actionMap = new HashMap<>();
 
     public ActionSet(ConfigurationSection actionSection) {
         for (String key : actionSection.getKeys(false)) {
-            ActionTrigger actionTrigger = ActionTrigger.valueOf(key.toUpperCase());
+            TriggerType triggerType = TriggerType.valueOf(key.toUpperCase());
 
             List<ItemAction> actionList = new ArrayList<>();
             for (String actionString : actionSection.getStringList(key)) {
                 actionList.add(ItemAction.fromString(actionString));
             }
-            actionMap.put(actionTrigger, actionList);
+            actionMap.put(triggerType, actionList);
         }
     }
 
@@ -46,22 +45,22 @@ public class ActionSet {
             if (actionEntryParts.length != 2) {
                 throw new IllegalArgumentException("The string " + actionEntry + " does not represent a valid action set string of the format <trigger>:<type>[ <value...>][,<type...]!");
             }
-            ActionTrigger actionTrigger = ActionTrigger.valueOf(actionEntryParts[0].toUpperCase());
+            TriggerType triggerType = TriggerType.valueOf(actionEntryParts[0].toUpperCase());
 
             List<ItemAction> actionList = new ArrayList<>();
             for (String actionString : actionEntryParts[1].split(",")) {
                 actionList.add(ItemAction.fromString(actionString));
             }
-            actionMap.put(actionTrigger, actionList);
+            actionMap.put(triggerType, actionList);
         }
     }
 
     /**
      * Get all the actions a specific trigger will run as a list
-     * @param trigger The ActionTrigger
+     * @param trigger The TriggerType
      * @return A list of ItemActions, empty if none configured
      */
-    public List<ItemAction> getActions(ActionTrigger trigger) {
+    public List<ItemAction> getActions(TriggerType trigger) {
         List<ItemAction> actions = actionMap.get(trigger);
         return actions != null ? actions : new ArrayList<ItemAction>();
     }
@@ -73,7 +72,7 @@ public class ActionSet {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Map.Entry<ActionTrigger, List<ItemAction>> entry : actionMap.entrySet()) {
+        for (Map.Entry<TriggerType, List<ItemAction>> entry : actionMap.entrySet()) {
             sb.append(entry.getKey()).append(':');
             for (ItemAction action : entry.getValue()) {
                 sb.append(action.toString()).append(',');
@@ -87,22 +86,20 @@ public class ActionSet {
     /**
      * Execute all actions for a specific trigger on/with a player
      * @param trigger The trigger
-     * @param player The player who triggered this special item
      * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
      */
-    public boolean execute(ActionTrigger trigger, Player player) {
-        boolean cancel = getActions(trigger).size() > 0;
-        for (ItemAction action : getActions(trigger)) {
-            cancel = cancel & action.execute(player);
+    public Trigger execute(Trigger trigger) {
+        for (ItemAction action : getActions(trigger.getType())) {
+            action.execute(trigger);
         }
-        return cancel;
+        return trigger;
     }
 
     public int size() {
         return actionMap.size();
     }
 
-    public Set<Map.Entry<ActionTrigger, List<ItemAction>>> entrySet() {
+    public Set<Map.Entry<TriggerType, List<ItemAction>>> entrySet() {
         return actionMap.entrySet();
     }
 }

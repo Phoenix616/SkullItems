@@ -15,7 +15,7 @@ package de.themoep.specialitems.actions;
  * You should have received a copy of the Mozilla Public License v2.0
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
-public enum ActionTrigger {
+public enum TriggerType {
     // Hand triggers:
     RIGHT_CLICK_HAND,
     LEFT_CLICK_HAND,
@@ -47,5 +47,5 @@ public enum ActionTrigger {
     DROP,
     CRAFT,
 
-    UNSUPPORTED,
+    UNSUPPORTED, trigger,
 }

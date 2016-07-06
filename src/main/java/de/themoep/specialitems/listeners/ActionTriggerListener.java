@@ -1,7 +1,8 @@
 package de.themoep.specialitems.listeners;
 
 import de.themoep.specialitems.SpecialItems;
-import de.themoep.specialitems.actions.ActionTrigger;
+import de.themoep.specialitems.actions.TriggerType;
+import de.themoep.specialitems.actions.Trigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,23 +39,25 @@ public class ActionTriggerListener implements Listener {
         if (!event.hasItem()) {
             return;
         }
-        ActionTrigger trigger = ActionTrigger.UNSUPPORTED;
+        TriggerType triggerType = TriggerType.UNSUPPORTED;
         switch (event.getAction()) {
             case RIGHT_CLICK_AIR:
             case RIGHT_CLICK_BLOCK:
-                trigger = ActionTrigger.RIGHT_CLICK_HAND;
+                triggerType = TriggerType.RIGHT_CLICK_HAND;
                 break;
             case LEFT_CLICK_AIR:
             case LEFT_CLICK_BLOCK:
-                trigger = ActionTrigger.LEFT_CLICK_HAND;
+                triggerType = TriggerType.LEFT_CLICK_HAND;
                 break;
         }
 
-        if (trigger == ActionTrigger.UNSUPPORTED) {
+        if (triggerType == TriggerType.UNSUPPORTED) {
             return;
         }
 
-        if (plugin.getItemManager().executeActions(event.getPlayer(), event.getItem(), trigger)) {
+        Trigger trigger = new Trigger(event, event.getPlayer(), event.getItem(), triggerType);
+        plugin.getItemManager().executeActions(trigger);
+        if (trigger.shouldCancel()) {
             event.setCancelled(true);
         }
     }
@@ -65,75 +68,77 @@ public class ActionTriggerListener implements Listener {
             return;
         }
 
-        ActionTrigger trigger = ActionTrigger.UNSUPPORTED;
+        TriggerType triggerType = TriggerType.UNSUPPORTED;
         switch (event.getClick()) {
             case LEFT:
-                trigger = ActionTrigger.LEFT_CLICK_INV;
+                triggerType = TriggerType.LEFT_CLICK_INV;
                 break;
             case SHIFT_LEFT:
-                trigger = ActionTrigger.SHIFT_LEFT_CLICK_INV;
+                triggerType = TriggerType.SHIFT_LEFT_CLICK_INV;
                 break;
             case RIGHT:
-                trigger = ActionTrigger.RIGHT_CLICK_INV;
+                triggerType = TriggerType.RIGHT_CLICK_INV;
                 break;
             case SHIFT_RIGHT:
-                trigger = ActionTrigger.SHIFT_RIGHT_CLICK_INV;
+                triggerType = TriggerType.SHIFT_RIGHT_CLICK_INV;
                 break;
             case MIDDLE:
-                trigger = ActionTrigger.MIDDLE_CLICK_INV;
+                triggerType = TriggerType.MIDDLE_CLICK_INV;
                 break;
             case DOUBLE_CLICK:
-                trigger = ActionTrigger.DOUBLE_CLICK_INV;
+                triggerType = TriggerType.DOUBLE_CLICK_INV;
                 break;
             case DROP:
-                trigger = ActionTrigger.DROP_INV;
+                triggerType = TriggerType.DROP_INV;
                 break;
             case CONTROL_DROP:
-                trigger = ActionTrigger.CONTROL_DROP_INV;
+                triggerType = TriggerType.CONTROL_DROP_INV;
                 break;
             case WINDOW_BORDER_LEFT:
-                trigger = ActionTrigger.LEFT_BORDER_INV;
+                triggerType = TriggerType.LEFT_BORDER_INV;
                 break;
             case WINDOW_BORDER_RIGHT:
-                trigger = ActionTrigger.RIGHT_BORDER_INV;
+                triggerType = TriggerType.RIGHT_BORDER_INV;
                 break;
             case NUMBER_KEY:
-                trigger = ActionTrigger.valueOf("NUMBER_KEY_" + (event.getHotbarButton() + 1) + " + _INV");
+                triggerType = TriggerType.valueOf("NUMBER_KEY_" + (event.getHotbarButton() + 1) + " + _INV");
                 break;
         }
 
-        if (trigger == ActionTrigger.UNSUPPORTED) {
+        if (triggerType == TriggerType.UNSUPPORTED) {
             return;
         }
 
-        if (plugin.getItemManager().executeActions((Player) event.getWhoClicked(), event.getCurrentItem(), trigger)) {
+        Trigger trigger = new Trigger(event, (Player) event.getWhoClicked(), event.getCurrentItem(), triggerType);
+        plugin.getItemManager().executeActions(trigger);
+        if (trigger.shouldCancel()) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onItemDrop(PlayerDropItemEvent event) {
-        if (plugin.getItemManager().executeActions(
-                event.getPlayer(), event.getItemDrop().getItemStack(), ActionTrigger.DROP
-        )) {
+        Trigger trigger = new Trigger(event, event.getPlayer(), event.getItemDrop().getItemStack(), TriggerType.DROP);
+        plugin.getItemManager().executeActions(trigger);
+        if (trigger.shouldCancel()) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onItemConsume(PlayerItemConsumeEvent event) {
-        if (plugin.getItemManager().executeActions(
-                event.getPlayer(), event.getItem(), ActionTrigger.CONSUME
-        )) {
+        Trigger trigger = new Trigger(event, event.getPlayer(), event.getItem(), TriggerType.CONSUME);
+        plugin.getItemManager().executeActions(trigger);
+        if (trigger.shouldCancel()) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onItemCraft(CraftItemEvent event) {
-        if (event.getWhoClicked() instanceof Player && plugin.getItemManager().executeActions(
-                (Player) event.getWhoClicked(), event.getRecipe().getResult(), ActionTrigger.CRAFT
-        )) {
+        Trigger trigger = new Trigger(event, (Player) event.getWhoClicked(), event.getRecipe().getResult(), TriggerType.CRAFT);
+        plugin.getItemManager().executeActions(trigger);
+        if (trigger.shouldCancel()) {
             event.setCancelled(true);
         }
     }

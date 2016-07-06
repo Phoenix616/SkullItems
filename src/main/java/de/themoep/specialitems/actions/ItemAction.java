@@ -114,10 +114,12 @@ public class ItemAction {
 
     /**
      * Execute an actions for on/with a player
-     * @param player The player who triggered this special item
-     * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
+     * @param trigger Information about the trigger that started this action
+     * @return The modified trigger
      */
-    public boolean execute(Player player) {
+    public Trigger execute(Trigger trigger) {
+        Player player = trigger.getPlayer();
+        trigger.setCancel(true);
         switch (getType()) {
             case OPEN_CRAFTING:
                 player.closeInventory();
@@ -154,8 +156,10 @@ public class ItemAction {
                 }
                 break;
             case DONT_CANCEL:
-                return false;
+            default:
+                trigger.setCancel(false);
+                break;
         }
-        return true;
+        return trigger;
     }
 }

@@ -1,7 +1,7 @@
 package de.themoep.specialitems;
 
-import de.themoep.specialitems.actions.ActionTrigger;
 import de.themoep.specialitems.actions.ItemAction;
+import de.themoep.specialitems.actions.TriggerType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -172,7 +172,7 @@ public class SpecialItemCommand implements CommandExecutor {
                             if (item.getActionSet().size() > 0) {
                                 sender.sendMessage(ChatColor.YELLOW + " Actions:");
                             }
-                            for (Map.Entry<ActionTrigger, List<ItemAction>> entry : item.getActionSet().entrySet()) {
+                            for (Map.Entry<TriggerType, List<ItemAction>> entry : item.getActionSet().entrySet()) {
                                 sender.sendMessage(" - " + entry.getKey() + ":");
                                 for (ItemAction action : entry.getValue()) {
                                     sender.sendMessage(ChatColor.GRAY + "    > " + action);
