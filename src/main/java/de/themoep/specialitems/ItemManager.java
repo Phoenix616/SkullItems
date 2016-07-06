@@ -209,7 +209,9 @@ public class ItemManager {
         }
         ItemMeta meta = item.getItemMeta();
 
-        meta.setDisplayName(ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', specialItem.getName()));
+        if (specialItem.getName() != null && !specialItem.getName().isEmpty()) {
+            meta.setDisplayName(ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', specialItem.getName()));
+        }
 
         List<String> lore = new ArrayList<>();
         for (String line : specialItem.getLore()) {
