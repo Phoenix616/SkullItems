@@ -310,14 +310,12 @@ public class ItemManager {
     public boolean executeActions(Player player, SpecialItem item, ActionTrigger trigger) {
         boolean hasPermission = true;
         if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
-            hasPermission = player.hasPermission("specialitems.item." + item.getId() + ".use." + trigger.toString().toLowerCase());
+            hasPermission = plugin.checkPerm(player, "specialitems.item." + item.getId() + ".use." + trigger.toString().toLowerCase(), "use");
         } else if (plugin.getConfig().getBoolean("permissions.use")) {
-            hasPermission = player.hasPermission("specialitems.item." + item.getId() + ".use");
+            hasPermission = plugin.checkPerm(player, "specialitems.item." + item.getId() + ".use", "use");
         }
         if (hasPermission) {
             return item.getActionSet().execute(trigger, player);
-        } else {
-            player.sendMessage(plugin.getLang("nopermission"));
         }
         return true;
     }

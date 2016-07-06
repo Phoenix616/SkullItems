@@ -5,7 +5,10 @@ permissions:
   drop: false
   craft: false
 lang:
-  nopermission: "&cYou don't have the permission to use this item!"
+  nopermission:
+    general:  "&cYou don't have the permission %perm%!"
+    use: "&cYou don't have the permission to use this item!"
+    craft: "&cYou don't have the permission to craft this item!"
 items:
   workbench:
     displayname: Mini Craftingtable

@@ -1,6 +1,7 @@
 package de.themoep.specialitems;
 
 import de.themoep.specialitems.listeners.ActionTriggerListener;
+import de.themoep.specialitems.listeners.ItemCraftListener;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +29,7 @@ public class SpecialItems extends JavaPlugin {
     public void onEnable() {
         loadConfig();
         getCommand("specialitems").setExecutor(new SpecialItemCommand(this));
+        getServer().getPluginManager().registerEvents(new ItemCraftListener(this), this);
         getServer().getPluginManager().registerEvents(new ActionTriggerListener(this), this);
     }
 
@@ -60,10 +62,14 @@ public class SpecialItems extends JavaPlugin {
     }
 
     public boolean checkPerm(CommandSender sender, String permission) {
+        return checkPerm(sender, permission, "general");
+    }
+
+    public boolean checkPerm(CommandSender sender, String permission, String type) {
         if (sender.hasPermission(permission)) {
             return true;
         }
-        sender.sendMessage(ChatColor.RED + "You don't have the permission " + permission);
+        sender.sendMessage(getLang("nopermission." + type, "perm", permission));
         return false;
     }
 }
