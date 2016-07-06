@@ -41,35 +41,23 @@ public class ActionTriggerListener implements Listener {
         if (!event.hasItem()) {
             return;
         }
-
-        boolean cancel = true;
-        try {
-            SpecialItem item = plugin.getItemManager().getSpecialItem(event.getItem());
-            if (item == null) {
-                return;
-            }
-            ActionTrigger trigger = ActionTrigger.UNSUPPORTED;
-            switch (event.getAction()) {
-                case RIGHT_CLICK_AIR:
-                case RIGHT_CLICK_BLOCK:
-                    trigger = ActionTrigger.RIGHT_CLICK_HAND;
-                    break;
-                case LEFT_CLICK_AIR:
-                case LEFT_CLICK_BLOCK:
-                    trigger = ActionTrigger.LEFT_CLICK_HAND;
-                    break;
-            }
-
-            if (trigger == ActionTrigger.UNSUPPORTED) {
-                return;
-            }
-
-            cancel = plugin.getItemManager().executeActions(event.getPlayer(), item, trigger);
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().log(Level.WARNING, event.getPlayer().getName() + " has an invalid item! " + e.getMessage());
+        ActionTrigger trigger = ActionTrigger.UNSUPPORTED;
+        switch (event.getAction()) {
+            case RIGHT_CLICK_AIR:
+            case RIGHT_CLICK_BLOCK:
+                trigger = ActionTrigger.RIGHT_CLICK_HAND;
+                break;
+            case LEFT_CLICK_AIR:
+            case LEFT_CLICK_BLOCK:
+                trigger = ActionTrigger.LEFT_CLICK_HAND;
+                break;
         }
 
-        if (cancel) {
+        if (trigger == ActionTrigger.UNSUPPORTED) {
+            return;
+        }
+
+        if (plugin.getItemManager().executeActions(event.getPlayer(), event.getItem(), trigger)) {
             event.setCancelled(true);
         }
     }
@@ -80,64 +68,39 @@ public class ActionTriggerListener implements Listener {
             return;
         }
 
-        boolean cancel = true;
-        try {
-            SpecialItem item = plugin.getItemManager().getSpecialItem(event.getCurrentItem());
-            if (item == null) {
-                return;
-            }
-            ActionTrigger trigger = ActionTrigger.UNSUPPORTED;
-            switch (event.getClick()) {
-                case LEFT:
-                    trigger = ActionTrigger.LEFT_CLICK_INV;
-                    break;
-                case SHIFT_LEFT:
-                    trigger = ActionTrigger.SHIFT_LEFT_CLICK_INV;
-                    break;
-                case RIGHT:
-                    trigger = ActionTrigger.RIGHT_CLICK_INV;
-                    break;
-                case SHIFT_RIGHT:
-                    trigger = ActionTrigger.SHIFT_RIGHT_CLICK_INV;
-                    break;
-                case MIDDLE:
-                    trigger = ActionTrigger.MIDDLE_CLICK_INV;
-                    break;
-            }
-
-            if (trigger == ActionTrigger.UNSUPPORTED) {
-                return;
-            }
-
-            cancel = plugin.getItemManager().executeActions((Player) event.getWhoClicked(), item, trigger);
-
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().log(Level.WARNING, event.getWhoClicked().getName() + " has an invalid item! " + e.getMessage());
+        ActionTrigger trigger = ActionTrigger.UNSUPPORTED;
+        switch (event.getClick()) {
+            case LEFT:
+                trigger = ActionTrigger.LEFT_CLICK_INV;
+                break;
+            case SHIFT_LEFT:
+                trigger = ActionTrigger.SHIFT_LEFT_CLICK_INV;
+                break;
+            case RIGHT:
+                trigger = ActionTrigger.RIGHT_CLICK_INV;
+                break;
+            case SHIFT_RIGHT:
+                trigger = ActionTrigger.SHIFT_RIGHT_CLICK_INV;
+                break;
+            case MIDDLE:
+                trigger = ActionTrigger.MIDDLE_CLICK_INV;
+                break;
         }
 
-        if (cancel) {
+        if (trigger == ActionTrigger.UNSUPPORTED) {
+            return;
+        }
+
+        if (plugin.getItemManager().executeActions((Player) event.getWhoClicked(), event.getCurrentItem(), trigger)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onItemDrop(PlayerDropItemEvent event) {
-        boolean cancel = true;
-        try {
-            SpecialItem item = plugin.getItemManager().getSpecialItem(event.getItemDrop().getItemStack());
-            if (item == null) {
-                return;
-            }
-            cancel = plugin.getItemManager().executeActions(
-                    event.getPlayer(),
-                    item,
-                    ActionTrigger.DROP
-            );
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().log(Level.WARNING, event.getPlayer().getName() + " has an invalid item! " + e.getMessage());
-        }
-
-        if (cancel) {
+        if (plugin.getItemManager().executeActions(
+                event.getPlayer(), event.getItemDrop().getItemStack(), ActionTrigger.DROP
+        )) {
             event.setCancelled(true);
         }
     }

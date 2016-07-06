@@ -25,5 +25,5 @@ public enum ActionTrigger {
     SHIFT_LEFT_CLICK_INV,
     MIDDLE_CLICK_INV,
     DROP,
-    UNSUPPORTED,
+    UNSUPPORTED, DOUBLE_CLICK_INV,
 }

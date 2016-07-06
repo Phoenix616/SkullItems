@@ -278,9 +278,34 @@ public class ItemManager {
     /**
      * Execute all actions for a specific trigger on/with a player
      * @param player The player who triggered this skull item
+     * @param itemStack the item stack that may trigger stuff
+     * @param trigger The trigger
+     * @return Whether or not the event that triggered this should be cancelled,
+     * <tt>true</tt> if there are actions and the do not contain ItemActionType.DONT_CANCEL,
+     * <tt>false</tt> if there are no actions
+     */
+    public boolean executeActions(Player player, ItemStack itemStack, ActionTrigger trigger) {
+        try {
+            SpecialItem item = plugin.getItemManager().getSpecialItem(itemStack);
+            if (item == null) {
+                return false;
+            }
+
+            return plugin.getItemManager().executeActions(player, item, trigger);
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().log(Level.WARNING, player.getName() + " has an invalid item! " + e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Execute all actions for a specific trigger on/with a player
+     * @param player The player who triggered this skull item
      * @param item the SpecialItem
      * @param trigger The trigger
-     * @return Whether or not the event that triggered this should be cancelled, default is <tt>true</tt>
+     * @return Whether or not the event that triggered this should be cancelled,
+     * <tt>true</tt> if there are actions and the do not contain ItemActionType.DONT_CANCEL,
+     * <tt>false</tt> if there are no actions
      */
     public boolean executeActions(Player player, SpecialItem item, ActionTrigger trigger) {
         boolean hasPermission = true;
