@@ -180,7 +180,7 @@ public class ActionTriggerListener implements Listener {
                 item = event.getItem();
                 item.setAmount(event.getItem().getAmount() - 1);
             }
-            event.setItem(item);
+            event.getPlayer().getInventory().setItemInMainHand(item);
             event.getPlayer().updateInventory();
         }
     }
