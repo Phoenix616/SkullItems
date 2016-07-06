@@ -1,18 +1,15 @@
 package de.themoep.specialitems.listeners;
 
-import de.themoep.specialitems.SpecialItem;
 import de.themoep.specialitems.SpecialItems;
 import de.themoep.specialitems.actions.ActionTrigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.util.logging.Level;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -118,6 +115,24 @@ public class ActionTriggerListener implements Listener {
     public void onItemDrop(PlayerDropItemEvent event) {
         if (plugin.getItemManager().executeActions(
                 event.getPlayer(), event.getItemDrop().getItemStack(), ActionTrigger.DROP
+        )) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onItemConsume(PlayerItemConsumeEvent event) {
+        if (plugin.getItemManager().executeActions(
+                event.getPlayer(), event.getItem(), ActionTrigger.CONSUME
+        )) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onItemCraft(CraftItemEvent event) {
+        if (event.getWhoClicked() instanceof Player && plugin.getItemManager().executeActions(
+                (Player) event.getWhoClicked(), event.getRecipe().getResult(), ActionTrigger.CRAFT
         )) {
             event.setCancelled(true);
         }

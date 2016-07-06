@@ -16,9 +16,12 @@ package de.themoep.specialitems.actions;
  * along with this program. If not, see <http://mozilla.org/MPL/2.0/>.
  */
 public enum ActionTrigger {
+    // Hand triggers:
     RIGHT_CLICK_HAND,
     LEFT_CLICK_HAND,
     MIDDLE_CLICK_HAND,
+
+    // Inventory triggers:
     RIGHT_CLICK_INV,
     SHIFT_RIGHT_CLICK_INV,
     LEFT_CLICK_INV,
@@ -38,6 +41,11 @@ public enum ActionTrigger {
     NUMBER_KEY_7_INV,
     NUMBER_KEY_8_INV,
     NUMBER_KEY_9_INV,
+
+    // Other:
+    CONSUME,
     DROP,
-    UNSUPPORTED,;
+    CRAFT,
+
+    UNSUPPORTED,
 }
