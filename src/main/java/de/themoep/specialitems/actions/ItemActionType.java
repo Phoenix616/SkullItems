@@ -20,6 +20,7 @@ enum ItemActionType {
     OPEN_CRAFTING,
     OPEN_ENCHANTING,
     OPEN_ANVIL,
+    CLOSE_INV,
     RUN_COMMAND(true),
     CONSOLE_COMMAND(true),
     MESSAGE(true),

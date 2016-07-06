@@ -137,6 +137,9 @@ public class ItemAction {
                 player.closeInventory();
                 player.openInventory(player.getServer().createInventory(null, InventoryType.ANVIL));
                 break;
+            case CLOSE_INV:
+                player.closeInventory();
+                break;
             case RUN_COMMAND:
                 if (hasValue()) {
                     player.performCommand(getValue(player));
