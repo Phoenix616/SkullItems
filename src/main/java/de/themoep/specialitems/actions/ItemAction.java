@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -95,7 +96,7 @@ public class ItemAction {
             return value;
         }
         Player player = trigger.getPlayer();
-        List<String> repl = Arrays.asList(
+        List<String> repl = new ArrayList<>(Arrays.asList(
                 "player", player.getName(),
                 "x", Integer.toString(player.getLocation().getBlockX()),
                 "y", Integer.toString(player.getLocation().getBlockY()),
@@ -111,7 +112,7 @@ public class ItemAction {
                 "zexacteye", Double.toString(player.getEyeLocation().getZ()),
                 "pitch", Float.toString(player.getEyeLocation().getPitch()),
                 "yaw", Float.toString(player.getEyeLocation().getYaw())
-        );
+        ));
         if (trigger instanceof TargetedTrigger) {
             TargetedTrigger targetedTrigger = (TargetedTrigger) trigger;
             Location targetLocation = targetedTrigger.getTarget().getLocation();
