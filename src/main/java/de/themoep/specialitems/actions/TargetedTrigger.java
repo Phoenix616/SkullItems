@@ -1,5 +1,6 @@
 package de.themoep.specialitems.actions;
 
+import de.themoep.specialitems.SpecialItem;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -24,6 +25,11 @@ public class TargetedTrigger extends Trigger {
     private Entity target;
 
     public TargetedTrigger(Event event, Player player, Entity target, ItemStack item, TriggerType type) {
+        super(event, player, item, type);
+        this.target = target;
+    }
+
+    public TargetedTrigger(Event event, Player player, Entity target, SpecialItem item, TriggerType type) {
         super(event, player, item, type);
         this.target = target;
     }

@@ -1,5 +1,6 @@
 package de.themoep.specialitems.listeners;
 
+import de.themoep.specialitems.SpecialItem;
 import de.themoep.specialitems.SpecialItems;
 import de.themoep.specialitems.actions.TargetedTrigger;
 import de.themoep.specialitems.actions.TriggerType;
@@ -18,6 +19,10 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
+
+import java.util.logging.Level;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -196,6 +201,12 @@ public class ActionTriggerListener implements Listener {
             Player player = (Player) event.getEntity().getShooter();
             Trigger trigger = new Trigger(event, player, player.getInventory().getItemInMainHand(), TriggerType.SHOOT_PROJECTILE);
             plugin.getItemManager().executeActions(trigger);
+            if (trigger.hasSpecialItem()) {
+                event.getEntity().setMetadata(
+                        "SpecialItemsShooter",
+                        new FixedMetadataValue(plugin, trigger.getSpecialItem().getId())
+                );
+            }
             if (trigger.shouldCancel()) {
                 event.setCancelled(true);
             }
@@ -211,24 +222,35 @@ public class ActionTriggerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onArrowHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player) {
-            Player player = (Player) event.getEntity().getShooter();
-            Trigger trigger = new TargetedTrigger(
-                    event,
-                    player,
-                    event.getEntity(),
-                    player.getInventory().getItemInMainHand(),
-                    TriggerType.PROJECTILE_HIT_BLOCK
-            );
-            plugin.getItemManager().executeActions(trigger);
-            if (trigger.shouldCancel()) {
-                // Not really supported, just remove the projectile here
-                event.getEntity().remove();
+            SpecialItem item = null;
+            if (event.getEntity().hasMetadata("SpecialItemsShooter")) {
+                for (MetadataValue value : event.getEntity().getMetadata("SpecialItemsShooter")) {
+                    SpecialItem shotItem = plugin.getItemManager().getSpecialItem(value.asString());
+                    if (shotItem != null) {
+                        item = shotItem;
+                        break;
+                    }
+                }
             }
-            if (trigger.shouldRemoveItem()) {
-                player.getInventory().setItemInMainHand(removeOne(trigger.getItem()));
-                player.updateInventory();
+            if (item != null) {
+                Player player = (Player) event.getEntity().getShooter();
+                Trigger trigger = new TargetedTrigger(
+                        event,
+                        player,
+                        event.getEntity(),
+                        item,
+                        TriggerType.PROJECTILE_HIT_BLOCK
+                );
+                plugin.getItemManager().executeActions(trigger);
+                if (trigger.shouldCancel()) {
+                    // Not really supported, just remove the projectile here
+                    event.getEntity().remove();
+                }
+                if (trigger.shouldRemoveItem()) {
+                    player.getInventory().removeItem(plugin.getItemManager().getItemStack(item));
+                    player.updateInventory();
+                }
             }
-
         }
     }
 
@@ -236,26 +258,41 @@ public class ActionTriggerListener implements Listener {
     public void onPlayerAttackEntity(EntityDamageByEntityEvent event) {
         Player player = null;
         TriggerType triggerType = TriggerType.UNSUPPORTED;
+        SpecialItem item = null;
         if (event.getDamager() instanceof Player) {
             player = (Player) event.getDamager();
             triggerType =
                     event.getEntity() instanceof Player
                             ? TriggerType.ATTACK_PLAYER
                             : TriggerType.ATTACK_ENTITY;
+            try {
+                item = plugin.getItemManager().getSpecialItem(player.getInventory().getItemInMainHand());
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().log(Level.WARNING, player.getName() + " has an invalid SpecialItem?", e);
+            }
         } else if (event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof Player) {
             player = (Player) ((Projectile) event.getDamager()).getShooter();
             triggerType =
                     event.getEntity() instanceof Player
                             ? TriggerType.PROJECTILE_HIT_PLAYER
                             : TriggerType.PROJECTILE_HIT_ENTITY;
+            if (event.getEntity().hasMetadata("SpecialItemsShooter")) {
+                for (MetadataValue value : event.getEntity().getMetadata("SpecialItemsShooter")) {
+                    SpecialItem shotItem = plugin.getItemManager().getSpecialItem(value.asString());
+                    if (shotItem != null) {
+                        item = shotItem;
+                        break;
+                    }
+                }
+            }
         }
 
-        if(player != null) {
+        if(item != null) {
             Trigger trigger = new TargetedTrigger(
                     event,
                     player,
                     event.getEntity(),
-                    player.getInventory().getItemInMainHand(),
+                    item,
                     triggerType
             );
             plugin.getItemManager().executeActions(trigger);
@@ -263,13 +300,7 @@ public class ActionTriggerListener implements Listener {
                 event.setCancelled(true);
             }
             if (trigger.shouldRemoveItem()) {
-                ItemStack item = player.getInventory().getItemInMainHand();
-                if (item.getAmount() > 1) {
-                    item.setAmount(item.getAmount() - 1);
-                } else {
-                    item = null;
-                }
-                player.getInventory().setItemInMainHand(item);
+                player.getInventory().removeItem(plugin.getItemManager().getItemStack(item));
                 player.updateInventory();
             }
         }

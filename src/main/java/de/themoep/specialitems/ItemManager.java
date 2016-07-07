@@ -287,8 +287,9 @@ public class ItemManager {
      */
     public Trigger executeActions(Trigger trigger) {
         try {
-            SpecialItem item = getSpecialItem(trigger.getItem());
+            SpecialItem item = trigger.hasSpecialItem() ? trigger.getSpecialItem() : getSpecialItem(trigger.getItem());
             if (item != null) {
+                trigger.setSpecialItem(item);
                 boolean hasPermission = true;
                 if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
                     hasPermission = plugin.checkPerm(

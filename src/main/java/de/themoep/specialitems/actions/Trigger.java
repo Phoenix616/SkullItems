@@ -1,5 +1,7 @@
 package de.themoep.specialitems.actions;
 
+import de.themoep.specialitems.SpecialItem;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -27,6 +29,8 @@ public class Trigger {
     private boolean cancel = false;
     private boolean removeItem = false;
 
+    private SpecialItem specialItem = null;
+
     /**
      * This object stores information about the trigger that will trigger actions
      * @param event The event that created this trigger
@@ -39,6 +43,11 @@ public class Trigger {
         this.player = player;
         this.item = item;
         this.type = type;
+    }
+
+    public Trigger(Event event, Player player, SpecialItem item, TriggerType type) {
+        this(event, player, item.getItem(), type);
+        this.specialItem = item;
     }
 
     public Event getEvent() {
@@ -71,5 +80,17 @@ public class Trigger {
 
     public boolean shouldRemoveItem() {
         return removeItem;
+    }
+
+    public void setSpecialItem(SpecialItem specialItem) {
+        this.specialItem = specialItem;
+    }
+
+    public SpecialItem getSpecialItem() {
+        return specialItem;
+    }
+
+    public boolean hasSpecialItem() {
+        return specialItem != null;
     }
 }
