@@ -1,8 +1,11 @@
 package de.themoep.specialitems;
 
 import de.themoep.specialitems.actions.ActionSet;
+import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +33,7 @@ public class SpecialItem {
     public SpecialItem(String id, String name, ItemStack item, ActionSet actions, List<String> lore) {
         this.id = id.toLowerCase();
         this.name = name;
-        this.item = item;
+        this.item = buildItemStack(item);
         this.actions = actions;
         this.lore = lore;
     }
@@ -57,5 +60,73 @@ public class SpecialItem {
 
     public ActionSet getActionSet() {
         return actions;
+    }
+
+    private ItemStack buildItemStack(ItemStack item) {
+        if (item == null) {
+            return null;
+        }
+        ItemMeta meta = item.getItemMeta();
+
+        if (getName() != null && !getName().isEmpty()) {
+            meta.setDisplayName(ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', getName()));
+        }
+
+        List<String> lore = new ArrayList<>();
+        for (String line : getLore()) {
+            lore.add(ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', line));
+        }
+        lore.add(hideString(getId(), ChatColor.BLUE + "" + ChatColor.ITALIC + "SpecialItems"));
+        meta.setLore(lore);
+
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
+    /**
+     * Hide a string inside another string with chat color characters
+     * @param hidden The string to hide
+     * @param string The string to hide in
+     * @return The string with the hidden string appended
+     */
+    public static String hideString(String hidden, String string) {
+        for (int i = string.length() - 1; i >= 0; i--) {
+            if (string.length() - i > 2)
+                break;
+            if (string.charAt(i) == ChatColor.COLOR_CHAR)
+                string = string.substring(0, i);
+        }
+        // Add hidden string
+        for (int i = 0; i < hidden.length(); i++) {
+            string += ChatColor.COLOR_CHAR + hidden.substring(i, i + 1);
+        }
+        return string;
+    }
+
+    /**
+     * Returns a hidden string in the itemstack which is hidden using the last lore line
+     */
+    public static String getHiddenString(ItemStack item) {
+        // Only the color chars at the end of the string is it
+        StringBuilder builder = new StringBuilder();
+        if (!item.hasItemMeta() || !item.getItemMeta().hasLore())
+            return null;
+        char[] chars = item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1).toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (c == org.bukkit.ChatColor.COLOR_CHAR)
+                continue;
+            if (i + 1 < chars.length) {
+                if (chars[i + 1] == org.bukkit.ChatColor.COLOR_CHAR && i > 1 && chars[i - 1] == org.bukkit.ChatColor.COLOR_CHAR)
+                    builder.append(c);
+                else if (builder.length() > 0)
+                    builder = new StringBuilder();
+            } else if (i > 0 && chars[i - 1] == org.bukkit.ChatColor.COLOR_CHAR)
+                builder.append(c);
+        }
+        if (builder.length() == 0)
+            return null;
+        return builder.toString();
     }
 }

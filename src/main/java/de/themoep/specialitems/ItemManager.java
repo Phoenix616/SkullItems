@@ -88,7 +88,7 @@ public class ItemManager {
                 try {
                     String recipeType = recipeSection.getString("type");
                     if ("shapeless".equalsIgnoreCase(recipeType)) {
-                        recipe = new ShapelessRecipe(getItemStack(item));
+                        recipe = new ShapelessRecipe(item.getItem());
                         for (String matStr : recipeSection.getConfigurationSection("materials").getKeys(false)) {
                             Material mat = Material.valueOf(matStr.toUpperCase());
                             ((ShapelessRecipe) recipe).addIngredient(
@@ -96,7 +96,7 @@ public class ItemManager {
                             );
                         }
                     } else if ("shaped".equalsIgnoreCase(recipeType)) {
-                        recipe = new ShapedRecipe(getItemStack(item));
+                        recipe = new ShapedRecipe(item.getItem());
                         List<String> shape = recipeSection.getStringList("shape");
                         ((ShapedRecipe) recipe).shape(shape.toArray(new String[shape.size()]));
                         for (String rKey : recipeSection.getConfigurationSection("keys").getKeys(false)) {
@@ -109,7 +109,7 @@ public class ItemManager {
                             ((ShapedRecipe) recipe).setIngredient(rKey.toCharArray()[0], mat);
                         }
                     } else if ("furnace".equalsIgnoreCase(recipeType)) {
-                        recipe = new FurnaceRecipe(getItemStack(item), Material.valueOf(recipeSection.getString("input")));
+                        recipe = new FurnaceRecipe(item.getItem(), Material.valueOf(recipeSection.getString("input")));
                         ((FurnaceRecipe) recipe).setExperience((float) recipeSection.getDouble("exp"));
                     } else {
                         throw new IllegalArgumentException(recipeType + " is not a supported or valid recipe type!");
@@ -186,89 +186,12 @@ public class ItemManager {
             return null;
         }
 
-        String hidden = getHiddenString(item);
+        String hidden = SpecialItem.getHiddenString(item);
         if (hidden == null) {
             throw new IllegalArgumentException("Item should be a special item but no hidden id string was found?");
         }
 
         return getSpecialItem(hidden);
-    }
-
-    public ItemStack getItemStack(String name) {
-        SpecialItem specialItem = getSpecialItem(name);
-        if (specialItem == null) {
-            return null;
-        }
-        return getItemStack(specialItem);
-    }
-
-    public ItemStack getItemStack(SpecialItem specialItem) {
-        ItemStack item = specialItem.getItem();
-        if (item == null) {
-            return null;
-        }
-        ItemMeta meta = item.getItemMeta();
-
-        if (specialItem.getName() != null && !specialItem.getName().isEmpty()) {
-            meta.setDisplayName(ChatColor.RESET + ChatColor.translateAlternateColorCodes('&', specialItem.getName()));
-        }
-
-        List<String> lore = new ArrayList<>();
-        for (String line : specialItem.getLore()) {
-            lore.add(ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', line));
-        }
-        lore.add(hideString(specialItem.getId(), ChatColor.BLUE + "" + ChatColor.ITALIC + plugin.getName()));
-        meta.setLore(lore);
-
-        item.setItemMeta(meta);
-
-        return item;
-    }
-
-    /**
-     * Hide a string inside another string with chat color characters
-     * @param hidden The string to hide
-     * @param string The string to hide in
-     * @return The string with the hidden string appended
-     */
-    private String hideString(String hidden, String string) {
-        for (int i = string.length() - 1; i >= 0; i--) {
-            if (string.length() - i > 2)
-                break;
-            if (string.charAt(i) == ChatColor.COLOR_CHAR)
-                string = string.substring(0, i);
-        }
-        // Add hidden string
-        for (int i = 0; i < hidden.length(); i++) {
-            string += ChatColor.COLOR_CHAR + hidden.substring(i, i + 1);
-        }
-        return string;
-    }
-
-    /**
-     * Returns a hidden string in the itemstack which is hidden using the last lore line
-     */
-    private String getHiddenString(ItemStack item) {
-        // Only the color chars at the end of the string is it
-        StringBuilder builder = new StringBuilder();
-        if (!item.hasItemMeta() || !item.getItemMeta().hasLore())
-            return null;
-        char[] chars = item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1).toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
-            if (c == org.bukkit.ChatColor.COLOR_CHAR)
-                continue;
-            if (i + 1 < chars.length) {
-                if (chars[i + 1] == org.bukkit.ChatColor.COLOR_CHAR && i > 1 && chars[i - 1] == org.bukkit.ChatColor.COLOR_CHAR)
-                    builder.append(c);
-                else if (builder.length() > 0)
-                    builder = new StringBuilder();
-            } else if (i > 0 && chars[i - 1] == org.bukkit.ChatColor.COLOR_CHAR)
-                builder.append(c);
-        }
-        if (builder.length() == 0)
-            return null;
-        return builder.toString();
     }
 
     public boolean isSpecialItem(ItemStack item) {

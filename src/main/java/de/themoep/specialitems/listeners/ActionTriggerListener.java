@@ -247,7 +247,7 @@ public class ActionTriggerListener implements Listener {
                     event.getEntity().remove();
                 }
                 if (trigger.shouldRemoveItem()) {
-                    player.getInventory().removeItem(plugin.getItemManager().getItemStack(item));
+                    player.getInventory().removeItem(item.getItem());
                     player.updateInventory();
                 }
             }
@@ -300,7 +300,7 @@ public class ActionTriggerListener implements Listener {
                 event.setCancelled(true);
             }
             if (trigger.shouldRemoveItem()) {
-                player.getInventory().removeItem(plugin.getItemManager().getItemStack(item));
+                player.getInventory().removeItem(item.getItem());
                 player.updateInventory();
             }
         }

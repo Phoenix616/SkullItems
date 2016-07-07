@@ -61,7 +61,7 @@ public class SpecialItemCommand implements CommandExecutor {
             } else if ("get".equalsIgnoreCase(args[0])) {
                 if (plugin.checkPerm(sender, "specialitems.command.get")) {
                     if (args.length > 1) {
-                        ItemStack item = plugin.getItemManager().getItemStack(args[1]);
+                        SpecialItem item = plugin.getItemManager().getSpecialItem(args[1]);
                         if (item != null) {
                             Player player = null;
                             if (args.length > 2) {
@@ -84,12 +84,12 @@ public class SpecialItemCommand implements CommandExecutor {
                                 return true;
                             }
 
-                            if (player.getInventory().addItem(item).size() > 0) {
+                            if (player.getInventory().addItem(item.getItem()).size() > 0) {
                                 sender.sendMessage(plugin.getTag() + ChatColor.RED
                                         + " Could not give item as you don't have any space iny our inventory!");
                             } else {
                                 sender.sendMessage(plugin.getTag() + ChatColor.YELLOW + " Gave "
-                                        + ChatColor.RESET + item.getItemMeta().getDisplayName()
+                                        + ChatColor.RESET + item.getItem().getItemMeta().getDisplayName()
                                         + ChatColor.YELLOW + " to " + ChatColor.RESET + player.getName());
                             }
                         } else {
