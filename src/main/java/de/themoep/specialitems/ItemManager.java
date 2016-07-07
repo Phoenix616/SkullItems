@@ -3,7 +3,6 @@ package de.themoep.specialitems;
 import de.themoep.specialitems.actions.ActionSet;
 import de.themoep.specialitems.actions.TriggerType;
 import de.themoep.specialitems.actions.Trigger;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.FurnaceRecipe;
@@ -11,10 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,7 +57,7 @@ public class ItemManager {
         Iterator<Recipe> recipes = plugin.getServer().recipeIterator();
         while (recipes.hasNext()) {
             Recipe recipe = recipes.next();
-            if (isSpecialItem(recipe.getResult())) {
+            if (SpecialItem.isSpecial(recipe.getResult())) {
                 recipes.remove();
             }
         }
@@ -182,7 +179,7 @@ public class ItemManager {
      * @return The SpecialItem or <tt>null</tt> if it isn't one or none was found with the encoded item name
      */
     public SpecialItem getSpecialItem(ItemStack item) throws IllegalArgumentException {
-        if (!isSpecialItem(item)) {
+        if (!SpecialItem.isSpecial(item)) {
             return null;
         }
 
@@ -192,13 +189,6 @@ public class ItemManager {
         }
 
         return getSpecialItem(hidden);
-    }
-
-    public boolean isSpecialItem(ItemStack item) {
-        return item != null
-                && item.hasItemMeta()
-                && item.getItemMeta().hasLore()
-                && item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1).contains(plugin.getName());
     }
 
     /**

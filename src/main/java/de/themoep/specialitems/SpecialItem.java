@@ -2,6 +2,7 @@ package de.themoep.specialitems;
 
 import de.themoep.specialitems.actions.ActionSet;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -84,6 +85,13 @@ public class SpecialItem {
         return item;
     }
 
+    public static boolean isSpecial(ItemStack item) {
+        return item != null
+                && item.hasItemMeta()
+                && item.getItemMeta().hasLore()
+                && item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1).contains("SpecialItems");
+    }
+
     /**
      * Hide a string inside another string with chat color characters
      * @param hidden The string to hide
@@ -128,5 +136,58 @@ public class SpecialItem {
         if (builder.length() == 0)
             return null;
         return builder.toString();
+    }
+
+    /**
+     * Search through an inventory to check whether or not it contains this special item
+     * @param inventory The inventory to search for the item in
+     * @return <tt>true</tt> if one was removed; <tt>false</tt> if none was found
+     */
+    public boolean isInInv(Inventory inventory) {
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack item = inventory.getItem(i);
+            if (isSpecial(item) && id.equals(getHiddenString(item))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Count how many times this item is contained in an inventory
+     * @param inventory The inventory to count the item in
+     * @return The number of items found
+     */
+    public int countInInv(Inventory inventory) {
+        int amount = 0;
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack item = inventory.getItem(i);
+            if (isSpecial(item) && id.equals(getHiddenString(item))) {
+                amount += item.getAmount();
+            }
+        }
+        return amount;
+    }
+
+    /**
+     * Remove one oof this special item from an inventory
+     * @param inventory The inventory to remove it from
+     * @param amount The amount to remove
+     * @return <tt>true</tt> if some where removed; <tt>false</tt> if none was found
+     */
+    public boolean removeFromInv(Inventory inventory, int amount) {
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack item = inventory.getItem(i);
+            if (isSpecial(item) && id.equals(getHiddenString(item))) {
+                if (item.getAmount() > amount) {
+                    item.setAmount(item.getAmount() - amount);
+                } else {
+                    item = null;
+                }
+                inventory.setItem(i, item);
+                return true;
+            }
+        }
+        return false;
     }
 }
