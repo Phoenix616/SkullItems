@@ -154,7 +154,7 @@ public class ItemAction {
                 targetName = target instanceof Player ? target.getName() : "Entity:" + target.getName();
             } else {
                 Block block = player.getTargetBlock((Set<Material>) null, checkDistance);
-                if (block != null) {
+                if (block != null && block.getType() != Material.AIR) {
                     targetLocation = block.getLocation();
                 }
             }
