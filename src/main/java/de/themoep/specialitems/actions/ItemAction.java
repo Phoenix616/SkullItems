@@ -132,7 +132,7 @@ public class ItemAction {
             Entity target = null;
             Location targetLocation = null;
             String targetName = "block";
-            int checkDistance = 32;
+            int checkDistance = 64;
             double nearest = checkDistance * checkDistance;
             double directest = 0;
             for (Entity e : player.getNearbyEntities(checkDistance, checkDistance, checkDistance)) {
