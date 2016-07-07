@@ -212,7 +212,13 @@ public class ActionTriggerListener implements Listener {
     public void onArrowHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player) {
             Player player = (Player) event.getEntity().getShooter();
-            Trigger trigger = new Trigger(event, player, player.getInventory().getItemInMainHand(), TriggerType.PROJECTILE_HIT_BLOCK);
+            Trigger trigger = new TargetedTrigger(
+                    event,
+                    player,
+                    event.getEntity(),
+                    player.getInventory().getItemInMainHand(),
+                    TriggerType.PROJECTILE_HIT_BLOCK
+            );
             plugin.getItemManager().executeActions(trigger);
             if (trigger.shouldCancel()) {
                 // Not really supported, just remove the projectile here
