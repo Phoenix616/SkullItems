@@ -2,12 +2,16 @@ package de.themoep.specialitems.actions;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -122,6 +126,50 @@ public class ItemAction {
                     "targetpitch", Float.toString(targetLocation.getPitch()),
                     "targetyaw", Float.toString(targetLocation.getYaw())
             ));
+        } else if (value.contains("%target")) {
+            Entity target = null;
+            Location targetLocation = null;
+            String targetName = "block";
+            int checkDistance = 32;
+            double nearest = checkDistance * checkDistance;
+            double directest = 0;
+            for (Entity e : player.getNearbyEntities(checkDistance, checkDistance, checkDistance)) {
+                Vector toEntity = e.getLocation().toVector().subtract(player.getEyeLocation().toVector());
+                double dot = toEntity.normalize().dot(player.getEyeLocation().getDirection());
+                if (dot > directest) {
+                    double distance = player.getLocation().distanceSquared(e.getLocation());
+                    if (distance <= nearest || dot - 0.1 > directest) {
+                        if (player.hasLineOfSight(e)) {
+                            nearest = distance;
+                            directest = dot;
+                            target = e;
+                        }
+                    }
+                }
+            }
+            if (target != null) {
+                targetLocation = target.getLocation();
+                targetName = target.getName();
+            } else {
+                Block block = player.getTargetBlock((Set<Material>) null, checkDistance);
+                if (block != null) {
+                    targetLocation = block.getLocation();
+                }
+            }
+
+            if (targetLocation != null) {
+                repl.addAll(Arrays.asList(
+                        "targetname", targetName,
+                        "targetx", Integer.toString(targetLocation.getBlockX()),
+                        "targety", Integer.toString(targetLocation.getBlockY()),
+                        "targetz", Integer.toString(targetLocation.getBlockZ()),
+                        "targetxexact", Double.toString(targetLocation.getX()),
+                        "targetyexact", Double.toString(targetLocation.getY()),
+                        "targetzexact", Double.toString(targetLocation.getZ()),
+                        "targetpitch", Float.toString(targetLocation.getPitch()),
+                        "targetyaw", Float.toString(targetLocation.getYaw())
+                ));
+            }
         }
         for (int i = 0; i + 1 < repl.size(); i += 2) {
             value = value.replace("%" + repl.get(i) + "%", repl.get(i+1));
