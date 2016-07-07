@@ -5,9 +5,11 @@ import de.themoep.specialitems.actions.TargetedTrigger;
 import de.themoep.specialitems.actions.TriggerType;
 import de.themoep.specialitems.actions.Trigger;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -207,17 +209,47 @@ public class ActionTriggerListener implements Listener {
     // Targeted Triggers:
 
     @EventHandler(ignoreCancelled = true)
+    public void onArrowHit(ProjectileHitEvent event) {
+        if (event.getEntity().getShooter() instanceof Player) {
+            Player player = (Player) event.getEntity().getShooter();
+            Trigger trigger = new Trigger(event, player, player.getInventory().getItemInMainHand(), TriggerType.PROJECTILE_HIT_BLOCK);
+            plugin.getItemManager().executeActions(trigger);
+            if (trigger.shouldCancel()) {
+                // Not really supported, just remove the projectile here
+                event.getEntity().remove();
+            }
+            if (trigger.shouldRemoveItem()) {
+                player.getInventory().setItemInMainHand(removeOne(trigger.getItem()));
+                player.updateInventory();
+            }
+
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerAttackEntity(EntityDamageByEntityEvent event) {
+        Player player = null;
+        TriggerType triggerType = TriggerType.UNSUPPORTED;
         if (event.getDamager() instanceof Player) {
-            TriggerType triggerType =
+            player = (Player) event.getDamager();
+            triggerType =
                     event.getEntity() instanceof Player
                             ? TriggerType.ATTACK_PLAYER
                             : TriggerType.ATTACK_ENTITY;
+        } else if (event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof Player) {
+            player = (Player) ((Projectile) event.getDamager()).getShooter();
+            triggerType =
+                    event.getEntity() instanceof Player
+                            ? TriggerType.PROJECTILE_HIT_PLAYER
+                            : TriggerType.PROJECTILE_HIT_ENTITY;
+        }
+
+        if(player != null) {
             Trigger trigger = new TargetedTrigger(
                     event,
-                    (Player) event.getDamager(),
+                    player,
                     event.getEntity(),
-                    ((Player) event.getDamager()).getInventory().getItemInMainHand(),
+                    player.getInventory().getItemInMainHand(),
                     triggerType
             );
             plugin.getItemManager().executeActions(trigger);
@@ -225,14 +257,14 @@ public class ActionTriggerListener implements Listener {
                 event.setCancelled(true);
             }
             if (trigger.shouldRemoveItem()) {
-                ItemStack item = ((Player) event.getDamager()).getInventory().getItemInMainHand();
+                ItemStack item = player.getInventory().getItemInMainHand();
                 if (item.getAmount() > 1) {
                     item.setAmount(item.getAmount() - 1);
                 } else {
                     item = null;
                 }
-                ((Player) event.getDamager()).getInventory().setItemInMainHand(item);
-                ((Player) event.getDamager()).updateInventory();
+                player.getInventory().setItemInMainHand(item);
+                player.updateInventory();
             }
         }
     }
