@@ -97,6 +97,7 @@ public class ItemAction {
         }
         Player player = trigger.getPlayer();
         List<String> repl = new ArrayList<>(Arrays.asList(
+                "trigger", trigger.getType().toString(),
                 "player", player.getName(),
                 "x", Integer.toString(player.getLocation().getBlockX()),
                 "y", Integer.toString(player.getLocation().getBlockY()),
@@ -150,7 +151,7 @@ public class ItemAction {
             }
             if (target != null) {
                 targetLocation = target.getLocation();
-                targetName = target.getName();
+                targetName = target instanceof Player ? target.getName() : "Entity:" + target.getName();
             } else {
                 Block block = player.getTargetBlock((Set<Material>) null, checkDistance);
                 if (block != null) {
