@@ -1,8 +1,13 @@
 package de.themoep.specialitems.actions;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Copyright 2016 Max Lee (https://github.com/Phoenix616/)
@@ -75,35 +80,51 @@ public class ItemAction {
 
     /**
      * Get the value and replace some tags for that specific player
-     * @param player The player to get the value for
+     * @param trigger The trigger that triggered this action
      * @return The value with all variables replaced
      */
-    public String getValue(Player player) {
+    public String getValue(Trigger trigger) {
         String value = getValue();
         if (value.indexOf('%') == -1) {
             // No percentage sign for variables in value string found,
             // just return the normal value without doing all the other stuff
             return value;
         }
-        String[] repl = {
+        Player player = trigger.getPlayer();
+        List<String> repl = Arrays.asList(
                 "player", player.getName(),
                 "x", Integer.toString(player.getLocation().getBlockX()),
                 "y", Integer.toString(player.getLocation().getBlockY()),
-                "t", Integer.toString(player.getLocation().getBlockZ()),
+                "z", Integer.toString(player.getLocation().getBlockZ()),
                 "xexact", Double.toString(player.getLocation().getX()),
                 "yexact", Double.toString(player.getLocation().getY()),
-                "texact", Double.toString(player.getLocation().getZ()),
+                "zexact", Double.toString(player.getLocation().getZ()),
                 "xeye", Double.toString(player.getEyeLocation().getBlockX()),
                 "yeye", Double.toString(player.getEyeLocation().getBlockY()),
-                "teye", Double.toString(player.getEyeLocation().getBlockZ()),
+                "zeye", Double.toString(player.getEyeLocation().getBlockZ()),
                 "xexacteye", Double.toString(player.getEyeLocation().getX()),
                 "yexacteye", Double.toString(player.getEyeLocation().getY()),
-                "texacteye", Double.toString(player.getEyeLocation().getZ()),
+                "zexacteye", Double.toString(player.getEyeLocation().getZ()),
                 "pitch", Float.toString(player.getEyeLocation().getPitch()),
-                "yaw", Float.toString(player.getEyeLocation().getYaw()),
-        };
-        for (int i = 0; i + 1 < repl.length; i += 2) {
-            value = value.replace("%" + repl[i] + "%", repl[i+2]);
+                "yaw", Float.toString(player.getEyeLocation().getYaw())
+        );
+        if (trigger instanceof TargetedTrigger) {
+            TargetedTrigger targetedTrigger = (TargetedTrigger) trigger;
+            Location targetLocation = targetedTrigger.getTarget().getLocation();
+            repl.addAll(Arrays.asList(
+                    "targetname", targetedTrigger.getTarget().getName(),
+                    "targetx", Integer.toString(targetLocation.getBlockX()),
+                    "targety", Integer.toString(targetLocation.getBlockY()),
+                    "targetz", Integer.toString(targetLocation.getBlockZ()),
+                    "targetxexact", Double.toString(targetLocation.getX()),
+                    "targetyexact", Double.toString(targetLocation.getY()),
+                    "targetzexact", Double.toString(targetLocation.getZ()),
+                    "targetpitch", Float.toString(targetLocation.getPitch()),
+                    "targetyaw", Float.toString(targetLocation.getYaw())
+            ));
+        }
+        for (int i = 0; i + 1 < repl.size(); i += 2) {
+            value = value.replace("%" + repl.get(i) + "%", repl.get(i+1));
         }
         return value;
     }
@@ -142,20 +163,20 @@ public class ItemAction {
                 break;
             case RUN_COMMAND:
                 if (hasValue()) {
-                    player.performCommand(getValue(player));
+                    player.performCommand(getValue(trigger));
                 }
                 break;
             case CONSOLE_COMMAND:
                 if (hasValue()) {
                     player.getServer().dispatchCommand(
                             player.getServer().getConsoleSender(),
-                            getValue(player)
+                            getValue(trigger)
                     );
                 }
                 break;
             case MESSAGE:
                 if (hasValue()) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', getValue(player)));
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', getValue(trigger)));
                 }
                 break;
             case REMOVE_ITEM:

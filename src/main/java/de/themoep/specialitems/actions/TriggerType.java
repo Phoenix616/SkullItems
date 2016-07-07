@@ -42,10 +42,17 @@ public enum TriggerType {
     NUMBER_KEY_8_INV,
     NUMBER_KEY_9_INV,
 
+    // Entity interaction:
+    ATTACK_ENTITY,
+    ATTACK_PLAYER,
+    RIGHT_CLICK_PLAYER,
+    RIGHT_CLICK_ENTITY,
+
     // Other:
+    SHOOT_PROJECTILE,
     CONSUME,
     DROP,
     CRAFT,
 
-    UNSUPPORTED, trigger,
+    UNSUPPORTED,
 }

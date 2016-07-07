@@ -1,14 +1,18 @@
 package de.themoep.specialitems.listeners;
 
 import de.themoep.specialitems.SpecialItems;
+import de.themoep.specialitems.actions.TargetedTrigger;
 import de.themoep.specialitems.actions.TriggerType;
 import de.themoep.specialitems.actions.Trigger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -62,11 +66,7 @@ public class ActionTriggerListener implements Listener {
             event.setCancelled(true);
         }
         if (trigger.shouldRemoveItem() && event.getHand() != null) {
-            ItemStack item = null;
-            if (event.getItem().getAmount() > 1) {
-                item = event.getItem();
-                item.setAmount(event.getItem().getAmount() - 1);
-            }
+            ItemStack item = removeOne(trigger.getItem());
             switch (event.getHand()) {
                 case HAND:
                     event.getPlayer().getInventory().setItem(event.getPlayer().getInventory().getHeldItemSlot(), item);
@@ -144,12 +144,7 @@ public class ActionTriggerListener implements Listener {
             event.setCancelled(true);
         }
         if (trigger.shouldRemoveItem()) {
-            ItemStack item = null;
-            if (event.getCurrentItem().getAmount() > 1) {
-                item = event.getCurrentItem();
-                item.setAmount(event.getCurrentItem().getAmount() - 1);
-            }
-            event.setCurrentItem(item);
+            event.setCurrentItem(removeOne(trigger.getItem()));
             ((Player) event.getWhoClicked()).updateInventory();
         }
     }
@@ -175,12 +170,7 @@ public class ActionTriggerListener implements Listener {
             event.setCancelled(true);
         }
         if (trigger.shouldRemoveItem()) {
-            ItemStack item = null;
-            if (event.getItem().getAmount() > 1) {
-                item = event.getItem();
-                item.setAmount(event.getItem().getAmount() - 1);
-            }
-            event.getPlayer().getInventory().setItemInMainHand(item);
+            event.getPlayer().getInventory().setItemInMainHand(removeOne(trigger.getItem()));
             event.getPlayer().updateInventory();
         }
     }
@@ -193,13 +183,121 @@ public class ActionTriggerListener implements Listener {
             event.setCancelled(true);
         }
         if (trigger.shouldRemoveItem()) {
-            ItemStack item = null;
-            if (event.getCurrentItem().getAmount() > 1) {
-                item = event.getCurrentItem();
-                item.setAmount(event.getCurrentItem().getAmount() - 1);
-            }
-            event.setCurrentItem(item);
+            event.setCurrentItem(removeOne(trigger.getItem()));
             ((Player) event.getWhoClicked()).updateInventory();
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onArrowShoot(ProjectileLaunchEvent event) {
+        if (event.getEntity().getShooter() instanceof Player) {
+            Player player = (Player) event.getEntity().getShooter();
+            Trigger trigger = new Trigger(event, player, player.getInventory().getItemInMainHand(), TriggerType.SHOOT_PROJECTILE);
+            plugin.getItemManager().executeActions(trigger);
+            if (trigger.shouldCancel()) {
+                event.setCancelled(true);
+            }
+            if (trigger.shouldRemoveItem()) {
+                player.getInventory().setItemInMainHand(removeOne(trigger.getItem()));
+                player.updateInventory();
+            }
+        }
+    }
+
+    // Targeted Triggers:
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerAttackEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player) {
+            TriggerType triggerType =
+                    event.getEntity() instanceof Player
+                            ? TriggerType.ATTACK_PLAYER
+                            : TriggerType.ATTACK_ENTITY;
+            Trigger trigger = new TargetedTrigger(
+                    event,
+                    (Player) event.getDamager(),
+                    event.getEntity(),
+                    ((Player) event.getDamager()).getInventory().getItemInMainHand(),
+                    triggerType
+            );
+            plugin.getItemManager().executeActions(trigger);
+            if (trigger.shouldCancel()) {
+                event.setCancelled(true);
+            }
+            if (trigger.shouldRemoveItem()) {
+                ItemStack item = ((Player) event.getDamager()).getInventory().getItemInMainHand();
+                if (item.getAmount() > 1) {
+                    item.setAmount(item.getAmount() - 1);
+                } else {
+                    item = null;
+                }
+                ((Player) event.getDamager()).getInventory().setItemInMainHand(item);
+                ((Player) event.getDamager()).updateInventory();
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerInteractWithEntity(PlayerInteractEntityEvent event) {
+        TriggerType triggerType =
+                event.getRightClicked() instanceof Player
+                        ? TriggerType.RIGHT_CLICK_PLAYER
+                        : TriggerType.RIGHT_CLICK_ENTITY;
+        Trigger trigger = new TargetedTrigger(
+                event,
+                event.getPlayer(),
+                event.getRightClicked(),
+                event.getPlayer().getInventory().getItemInMainHand(),
+                triggerType
+        );
+        plugin.getItemManager().executeActions(trigger);
+        if (trigger.shouldCancel()) {
+            event.setCancelled(true);
+        }
+        if (trigger.shouldRemoveItem() && event.getHand() != null) {
+            switch (event.getHand()) {
+                case HAND:
+                    event.getPlayer().getInventory().setItem(
+                            event.getPlayer().getInventory().getHeldItemSlot(),
+                            removeOne(event.getPlayer().getInventory().getItemInMainHand())
+                    );
+                    break;
+                case OFF_HAND:
+                    event.getPlayer().getInventory().setItemInOffHand(
+                            removeOne(event.getPlayer().getInventory().getItemInOffHand())
+                    );
+                    break;
+                case HEAD:
+                    event.getPlayer().getInventory().setHelmet(
+                            removeOne(event.getPlayer().getInventory().getHelmet())
+                    );
+                    break;
+                case CHEST:
+                    event.getPlayer().getInventory().setChestplate(
+                            removeOne(event.getPlayer().getInventory().getChestplate())
+                    );
+                    break;
+                case LEGS:
+                    event.getPlayer().getInventory().setLeggings(
+                            removeOne(event.getPlayer().getInventory().getLeggings())
+                    );
+                    break;
+                case FEET:
+                    event.getPlayer().getInventory().setBoots(
+                            removeOne(event.getPlayer().getInventory().getBoots())
+                    );
+                    break;
+            }
+            event.getPlayer().updateInventory();
+        }
+    }
+
+    private ItemStack removeOne(ItemStack item) {
+        if (item.getAmount() > 1) {
+            item.setAmount(item.getAmount() - 1);
+        } else {
+            item = null;
+        }
+        return item;
     }
 }
