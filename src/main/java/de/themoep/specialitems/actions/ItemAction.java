@@ -193,6 +193,10 @@ public class ItemAction {
     public Trigger execute(Trigger trigger) {
         Player player = trigger.getPlayer();
         trigger.setCancel(true);
+        if (getType().requiresValue() && !hasValue()) {
+            trigger.getPlayer().sendMessage(ChatColor.RED + "Error while running this item's action " + getType() + "! It requires a value but I can't find any? Please inform an administrator about this configuration error!");
+            return trigger;
+        }
         switch (getType()) {
             case OPEN_CRAFTING:
                 player.closeInventory();
@@ -214,38 +218,31 @@ public class ItemAction {
                 player.closeInventory();
                 break;
             case RUN_COMMAND:
-                if (hasValue()) {
-                    player.performCommand(getValue(trigger));
-                }
+                player.performCommand(getValue(trigger));
                 break;
             case SUDO_COMMAND:
-                if (hasValue()) {
-                    PermissionAttachment permAtt = player.addAttachment(
-                            SpecialItems.getProvidingPlugin(SpecialItems.class),
-                            "*", true
-                    );
-                    boolean isOp = player.isOp();
-                    if (!isOp) {
-                        player.setOp(true);
-                    }
-                    player.performCommand(getValue(trigger));
-                    if (!isOp) {
-                        player.setOp(false);
-                    }
-                    permAtt.remove();
+                PermissionAttachment permAtt = player.addAttachment(
+                        SpecialItems.getProvidingPlugin(SpecialItems.class),
+                        "*", true
+                );
+                boolean isOp = player.isOp();
+                if (!isOp) {
+                    player.setOp(true);
                 }
+                player.performCommand(getValue(trigger));
+                if (!isOp) {
+                    player.setOp(false);
+                }
+                permAtt.remove();
+                break;
             case CONSOLE_COMMAND:
-                if (hasValue()) {
-                    player.getServer().dispatchCommand(
-                            player.getServer().getConsoleSender(),
-                            getValue(trigger)
-                    );
-                }
+                player.getServer().dispatchCommand(
+                        player.getServer().getConsoleSender(),
+                        getValue(trigger)
+                );
                 break;
             case MESSAGE:
-                if (hasValue()) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', getValue(trigger)));
-                }
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', getValue(trigger)));
                 break;
             case REMOVE_ITEM:
                 trigger.setRemoveItem(true);
