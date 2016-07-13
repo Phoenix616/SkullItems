@@ -22,6 +22,7 @@ enum ItemActionType {
     OPEN_ANVIL,
     CLOSE_INV,
     RUN_COMMAND(true),
+    SUDO_COMMAND(true),
     CONSOLE_COMMAND(true),
     MESSAGE(true),
     REMOVE_ITEM,

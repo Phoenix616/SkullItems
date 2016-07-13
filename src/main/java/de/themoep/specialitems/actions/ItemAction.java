@@ -1,5 +1,6 @@
 package de.themoep.specialitems.actions;
 
+import de.themoep.specialitems.SpecialItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -7,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -216,6 +218,22 @@ public class ItemAction {
                     player.performCommand(getValue(trigger));
                 }
                 break;
+            case SUDO_COMMAND:
+                if (hasValue()) {
+                    PermissionAttachment permAtt = player.addAttachment(
+                            SpecialItems.getProvidingPlugin(SpecialItems.class),
+                            "*", true
+                    );
+                    boolean isOp = player.isOp();
+                    if (!isOp) {
+                        player.setOp(true);
+                    }
+                    player.performCommand(getValue(trigger));
+                    if (!isOp) {
+                        player.setOp(false);
+                    }
+                    permAtt.remove();
+                }
             case CONSOLE_COMMAND:
                 if (hasValue()) {
                     player.getServer().dispatchCommand(
