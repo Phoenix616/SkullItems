@@ -7,7 +7,7 @@ commands:
    specialitems:
       aliases: [specialitem]
       description: Command description.
-      usage: /<command> list|info|get|set|reload
+      usage: /<command> [list|info|get|set|reload]
       permission: specialitems.command
       permission-message: You don't have the permission <permission>
 permissions:
