@@ -36,7 +36,7 @@ public class SpecialItem {
         this.name = name;
         this.item = buildItemStack(item);
         this.actions = actions;
-        this.lore = lore;
+        this.lore = lore != null ? lore : new ArrayList<String>();
     }
 
     public SpecialItem(SpecialItem item) {
