@@ -38,7 +38,8 @@ public class ItemGui implements Listener {
 
     public ItemGui(SpecialItems plugin) {
         this.plugin = plugin;
-        int invSize = (plugin.getItemManager().getSpecialItems().size() + 9) % 9;
+        int invSize = plugin.getItemManager().getSpecialItems().size();
+        invSize = invSize + 9 - (invSize % 9);
         inv = plugin.getServer().createInventory(null, invSize, plugin.getName());
         for (SpecialItem item : plugin.getItemManager().getSpecialItems()) {
             inv.addItem(item.getItem());
