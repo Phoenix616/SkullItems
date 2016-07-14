@@ -73,9 +73,6 @@ public class ActionTriggerListener implements Listener {
 
         Trigger trigger = new Trigger(event, event.getPlayer(), event.getItem(), triggerType);
         plugin.getItemManager().executeActions(trigger);
-        if (trigger.shouldCancel()) {
-            event.setCancelled(true);
-        }
         if (trigger.shouldRemoveItem() && event.getHand() != null) {
             ItemStack item = removeOne(trigger.getItem());
             switch (event.getHand()) {
@@ -151,9 +148,6 @@ public class ActionTriggerListener implements Listener {
 
         Trigger trigger = new Trigger(event, (Player) event.getWhoClicked(), event.getCurrentItem(), triggerType);
         plugin.getItemManager().executeActions(trigger);
-        if (trigger.shouldCancel()) {
-            event.setCancelled(true);
-        }
         if (trigger.shouldRemoveItem()) {
             event.setCurrentItem(removeOne(trigger.getItem()));
             ((Player) event.getWhoClicked()).updateInventory();
@@ -164,9 +158,7 @@ public class ActionTriggerListener implements Listener {
     public void onItemDrop(PlayerDropItemEvent event) {
         Trigger trigger = new Trigger(event, event.getPlayer(), event.getItemDrop().getItemStack(), TriggerType.DROP);
         plugin.getItemManager().executeActions(trigger);
-        if (trigger.shouldCancel()) {
-            event.setCancelled(true);
-        } else if (trigger.shouldRemoveItem()) {
+        if (trigger.shouldRemoveItem()) {
             // no nice way to remove dropped item if the event was cancelled
             // TODO: Add info to documentation about that incompatibility!
             event.getItemDrop().remove();
@@ -177,9 +169,6 @@ public class ActionTriggerListener implements Listener {
     public void onItemConsume(PlayerItemConsumeEvent event) {
         Trigger trigger = new Trigger(event, event.getPlayer(), event.getItem(), TriggerType.CONSUME);
         plugin.getItemManager().executeActions(trigger);
-        if (trigger.shouldCancel()) {
-            event.setCancelled(true);
-        }
         if (trigger.shouldRemoveItem()) {
             event.getPlayer().getInventory().setItemInMainHand(removeOne(trigger.getItem()));
             event.getPlayer().updateInventory();
@@ -190,9 +179,6 @@ public class ActionTriggerListener implements Listener {
     public void onItemCraft(CraftItemEvent event) {
         Trigger trigger = new Trigger(event, (Player) event.getWhoClicked(), event.getRecipe().getResult(), TriggerType.CRAFT);
         plugin.getItemManager().executeActions(trigger);
-        if (trigger.shouldCancel()) {
-            event.setCancelled(true);
-        }
         if (trigger.shouldRemoveItem()) {
             event.setCurrentItem(removeOne(trigger.getItem()));
             ((Player) event.getWhoClicked()).updateInventory();
@@ -210,9 +196,6 @@ public class ActionTriggerListener implements Listener {
                         "SpecialItemsShooter",
                         new FixedMetadataValue(plugin, trigger.getSpecialItem().getId())
                 );
-            }
-            if (trigger.shouldCancel()) {
-                event.setCancelled(true);
             }
             if (trigger.shouldRemoveItem()) {
                 player.getInventory().setItemInMainHand(removeOne(trigger.getItem()));
@@ -246,10 +229,6 @@ public class ActionTriggerListener implements Listener {
                         TriggerType.PROJECTILE_HIT_BLOCK
                 );
                 plugin.getItemManager().executeActions(trigger);
-                if (trigger.shouldCancel()) {
-                    // Not really supported, just remove the projectile here
-                    event.getEntity().remove();
-                }
                 if (trigger.shouldRemoveItem()) {
                     item.removeFromInv(player.getInventory(), 1);
                     player.updateInventory();
@@ -300,9 +279,6 @@ public class ActionTriggerListener implements Listener {
                     triggerType
             );
             plugin.getItemManager().executeActions(trigger);
-            if (trigger.shouldCancel()) {
-                event.setCancelled(true);
-            }
             if (trigger.shouldRemoveItem()) {
                 item.removeFromInv(player.getInventory(), 1);
                 player.updateInventory();
@@ -324,9 +300,6 @@ public class ActionTriggerListener implements Listener {
                 triggerType
         );
         plugin.getItemManager().executeActions(trigger);
-        if (trigger.shouldCancel()) {
-            event.setCancelled(true);
-        }
         if (trigger.shouldRemoveItem() && event.getHand() != null) {
             switch (event.getHand()) {
                 case HAND:

@@ -1,6 +1,7 @@
 package de.themoep.specialitems.actions;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.event.Cancellable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +97,9 @@ public class ActionSet {
     public Trigger execute(Trigger trigger) {
         for (ItemAction action : getActions(trigger.getType())) {
             action.execute(trigger);
+        }
+        if (trigger.shouldCancel() && trigger.getEvent() instanceof Cancellable) {
+            ((Cancellable) trigger.getEvent()).setCancelled(true);
         }
         return trigger;
     }
