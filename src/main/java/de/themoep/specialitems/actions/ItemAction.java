@@ -133,15 +133,15 @@ public class ItemAction {
                 "x", Integer.toString(player.getLocation().getBlockX()),
                 "y", Integer.toString(player.getLocation().getBlockY()),
                 "z", Integer.toString(player.getLocation().getBlockZ()),
-                "xexact", Double.toString(player.getLocation().getX()),
-                "yexact", Double.toString(player.getLocation().getY()),
-                "zexact", Double.toString(player.getLocation().getZ()),
-                "xeye", Double.toString(player.getEyeLocation().getBlockX()),
-                "yeye", Double.toString(player.getEyeLocation().getBlockY()),
-                "zeye", Double.toString(player.getEyeLocation().getBlockZ()),
-                "xexacteye", Double.toString(player.getEyeLocation().getX()),
-                "yexacteye", Double.toString(player.getEyeLocation().getY()),
-                "zexacteye", Double.toString(player.getEyeLocation().getZ()),
+                "x.exact", Double.toString(player.getLocation().getX()),
+                "y.exact", Double.toString(player.getLocation().getY()),
+                "z.exact", Double.toString(player.getLocation().getZ()),
+                "eye.x", Double.toString(player.getEyeLocation().getBlockX()),
+                "eye.y", Double.toString(player.getEyeLocation().getBlockY()),
+                "eye.z", Double.toString(player.getEyeLocation().getBlockZ()),
+                "eye.x.exact", Double.toString(player.getEyeLocation().getX()),
+                "eye.y.exact", Double.toString(player.getEyeLocation().getY()),
+                "eye.z.exact", Double.toString(player.getEyeLocation().getZ()),
                 "pitch", Float.toString(player.getEyeLocation().getPitch()),
                 "yaw", Float.toString(player.getEyeLocation().getYaw())
         ));
@@ -149,17 +149,17 @@ public class ItemAction {
             TargetedTrigger targetedTrigger = (TargetedTrigger) trigger;
             Location targetLocation = targetedTrigger.getTarget().getLocation();
             repl.addAll(Arrays.asList(
-                    "targetname", targetedTrigger.getTarget().getName(),
-                    "targetx", Integer.toString(targetLocation.getBlockX()),
-                    "targety", Integer.toString(targetLocation.getBlockY()),
-                    "targetz", Integer.toString(targetLocation.getBlockZ()),
-                    "targetxexact", Double.toString(targetLocation.getX()),
-                    "targetyexact", Double.toString(targetLocation.getY()),
-                    "targetzexact", Double.toString(targetLocation.getZ()),
-                    "targetpitch", Float.toString(targetLocation.getPitch()),
-                    "targetyaw", Float.toString(targetLocation.getYaw())
+                    "target.name", targetedTrigger.getTarget().getName(),
+                    "target.x", Integer.toString(targetLocation.getBlockX()),
+                    "target.y", Integer.toString(targetLocation.getBlockY()),
+                    "target.z", Integer.toString(targetLocation.getBlockZ()),
+                    "target.x.exact", Double.toString(targetLocation.getX()),
+                    "target.y.exact", Double.toString(targetLocation.getY()),
+                    "target.z.exact", Double.toString(targetLocation.getZ()),
+                    "target.pitch", Float.toString(targetLocation.getPitch()),
+                    "target.yaw", Float.toString(targetLocation.getYaw())
             ));
-        } else if (value.contains("%target")) {
+        } else if (value.contains("%target.")) {
             Entity target = null;
             Location targetLocation = null;
             String targetName = "block";
@@ -192,15 +192,15 @@ public class ItemAction {
 
             if (targetLocation != null) {
                 repl.addAll(Arrays.asList(
-                        "targetname", targetName,
-                        "targetx", Integer.toString(targetLocation.getBlockX()),
-                        "targety", Integer.toString(targetLocation.getBlockY()),
-                        "targetz", Integer.toString(targetLocation.getBlockZ()),
-                        "targetxexact", Double.toString(targetLocation.getX()),
-                        "targetyexact", Double.toString(targetLocation.getY()),
-                        "targetzexact", Double.toString(targetLocation.getZ()),
-                        "targetpitch", Float.toString(targetLocation.getPitch()),
-                        "targetyaw", Float.toString(targetLocation.getYaw())
+                        "target.name", targetName,
+                        "target.x", Integer.toString(targetLocation.getBlockX()),
+                        "target.y", Integer.toString(targetLocation.getBlockY()),
+                        "target.z", Integer.toString(targetLocation.getBlockZ()),
+                        "target.x.exact", Double.toString(targetLocation.getX()),
+                        "target.y.exact", Double.toString(targetLocation.getY()),
+                        "target.z.exact", Double.toString(targetLocation.getZ()),
+                        "target.pitch", Float.toString(targetLocation.getPitch()),
+                        "target.yaw", Float.toString(targetLocation.getYaw())
                 ));
             }
         }
