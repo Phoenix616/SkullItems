@@ -36,43 +36,41 @@ import java.util.UUID;
 public class ItemGui implements Listener {
 
     private final SpecialItems plugin;
-    private final Inventory inv;
     private Set<UUID> viewers = new HashSet<>();
 
     public ItemGui(SpecialItems plugin) {
         this.plugin = plugin;
-        int invSize = plugin.getItemManager().getSpecialItems().size();
-        invSize = invSize + 9 - (invSize % 9);
-        inv = plugin.getServer().createInventory(null, invSize, plugin.getName());
-        for (SpecialItem item : plugin.getItemManager().getSpecialItems()) {
-            inv.addItem(item.getItem());
-        }
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     public void show(Player player) {
         player.closeInventory();
         viewers.add(player.getUniqueId());
+        int invSize = plugin.getItemManager().getSpecialItems().size();
+        invSize = invSize + 9 - (invSize % 9);
+        Inventory inv = plugin.getServer().createInventory(null, invSize, plugin.getName());
+        for (SpecialItem item : plugin.getItemManager().getSpecialItems()) {
+            inv.addItem(item.getItem());
+        }
         player.openInventory(inv);
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (viewers.contains(event.getWhoClicked().getUniqueId())) {
-            if (event.getClickedInventory() == event.getView().getTopInventory()) {
+            if (event.getAction() != InventoryAction.PICKUP_ONE) {
+                event.setCancelled(true);
+                if (event.getAction() == InventoryAction.SWAP_WITH_CURSOR) {
+                    event.getWhoClicked().sendMessage(plugin.getTag() + ChatColor.RED + "You need an empty cursor to take items!");
+                }
+            } else if (event.getClickedInventory() == event.getView().getTopInventory()) {
                 event.setCancelled(true);
                 if (plugin.checkPerm(event.getWhoClicked(), "specialitems.gui.take", "gui.take")) {
-                    if (event.getCursor() == null || event.getCursor().getType() == Material.AIR) {
-                        event.setCursor(event.getCurrentItem());
-                        if (event.getWhoClicked() instanceof Player) {
-                            ((Player) event.getWhoClicked()).updateInventory();
-                        }
-                    } else {
-                        event.getWhoClicked().sendMessage(plugin.getTag() + ChatColor.RED + "You need an empty cursor to take items!");
+                    event.setCursor(event.getCurrentItem());
+                    if (event.getWhoClicked() instanceof Player) {
+                        ((Player) event.getWhoClicked()).updateInventory();
                     }
                 }
-            } else if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY || event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
-                event.setCancelled(true);
             }
         }
     }
@@ -116,7 +114,7 @@ public class ItemGui implements Listener {
     public void destroy() {
         for (UUID id : viewers) {
             Player player = plugin.getServer().getPlayer(id);
-            if (player != null && player.isOnline() && player.getOpenInventory().getTopInventory() == inv) {
+            if (player != null && player.isOnline()) {
                 player.closeInventory();
             }
         }
