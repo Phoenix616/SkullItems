@@ -29,6 +29,7 @@ public class SpecialItems extends JavaPlugin {
 
     public void onEnable() {
         loadConfig();
+        gui = new ItemGui(this);
         getCommand("specialitems").setExecutor(new SpecialItemCommand(this));
         getServer().getPluginManager().registerEvents(new ItemCraftListener(this), this);
         getServer().getPluginManager().registerEvents(new ActionTriggerListener(this), this);
@@ -38,10 +39,7 @@ public class SpecialItems extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
         itemManager = new ItemManager(this);
-        if (gui != null) {
-            gui.destroy();
-        }
-        gui = new ItemGui(this);
+        gui.destroy();
     }
 
     public ItemManager getItemManager() {

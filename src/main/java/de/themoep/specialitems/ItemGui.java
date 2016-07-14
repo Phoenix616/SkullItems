@@ -118,5 +118,6 @@ public class ItemGui implements Listener {
                 player.closeInventory();
             }
         }
+        viewers.clear();
     }
 }
