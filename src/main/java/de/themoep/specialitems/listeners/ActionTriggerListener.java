@@ -71,7 +71,12 @@ public class ActionTriggerListener implements Listener {
             return;
         }
 
-        Trigger trigger = new Trigger(event, event.getPlayer(), event.getItem(), triggerType);
+        Trigger trigger;
+        if (triggerType.isChildOf(TriggerType.CLICK_BLOCK)) {
+            trigger = new TargetedTrigger(event, event.getPlayer(), event.getClickedBlock(), event.getItem(), triggerType);
+        } else {
+            trigger = new Trigger(event, event.getPlayer(), event.getItem(), triggerType);
+        }
         plugin.getItemManager().executeActions(trigger);
         if (trigger.shouldRemoveItem() && event.getHand() != null) {
             ItemStack item = removeOne(trigger.getItem());

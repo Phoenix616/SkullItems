@@ -148,6 +148,7 @@ public class ItemAction {
         if (trigger instanceof TargetedTrigger) {
             TargetedTrigger targetedTrigger = (TargetedTrigger) trigger;
             Location targetLocation = targetedTrigger.getTarget().getLocation();
+            Location targetEyeLocation = targetedTrigger.getTarget().getEyeLocation();
             repl.addAll(Arrays.asList(
                     "target.name", targetedTrigger.getTarget().getName(),
                     "target.x", Integer.toString(targetLocation.getBlockX()),
@@ -156,13 +157,19 @@ public class ItemAction {
                     "target.x.exact", Double.toString(targetLocation.getX()),
                     "target.y.exact", Double.toString(targetLocation.getY()),
                     "target.z.exact", Double.toString(targetLocation.getZ()),
-                    "target.pitch", Float.toString(targetLocation.getPitch()),
-                    "target.yaw", Float.toString(targetLocation.getYaw())
+                    "target.eye.x", Double.toString(targetEyeLocation.getBlockX()),
+                    "target.eye.y", Double.toString(targetEyeLocation.getBlockY()),
+                    "target.eye.z", Double.toString(targetEyeLocation.getBlockZ()),
+                    "target.eye.x.exact", Double.toString(targetEyeLocation.getX()),
+                    "target.eye.y.exact", Double.toString(targetEyeLocation.getY()),
+                    "target.eye.z.exact", Double.toString(targetEyeLocation.getZ()),
+                    "target.pitch", Float.toString(targetEyeLocation.getPitch()),
+                    "target.yaw", Float.toString(targetEyeLocation.getYaw())
             ));
         } else if (value.contains("%target.")) {
             Entity target = null;
             Location targetLocation = null;
-            String targetName = "block";
+            String targetName = "BLOCK";
             int checkDistance = 64;
             double nearest = checkDistance * checkDistance;
             double directest = 0;
@@ -182,11 +189,12 @@ public class ItemAction {
             }
             if (target != null) {
                 targetLocation = target.getLocation();
-                targetName = target instanceof Player ? target.getName() : "Entity:" + target.getName();
+                targetName = target instanceof Player ? target.getName() : target.getType() + ":" + target.getName();
             } else {
                 Block block = player.getTargetBlock((Set<Material>) null, checkDistance);
                 if (block != null && block.getType() != Material.AIR) {
                     targetLocation = block.getLocation();
+                    targetName = "BLOCK:" + block.getType();
                 }
             }
 

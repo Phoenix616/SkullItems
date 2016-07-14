@@ -18,25 +18,26 @@ package de.themoep.specialitems.actions;
 public enum TriggerType {
     // Hand triggers:
     HAND,
+    CLICK_AIR (HAND),
+    CLICK_BLOCK (HAND),
     RIGHT_CLICK_HAND(HAND),
-    RIGHT_CLICK_AIR(RIGHT_CLICK_HAND),
-    RIGHT_CLICK_BLOCK(RIGHT_CLICK_HAND),
+    RIGHT_CLICK_AIR(RIGHT_CLICK_HAND, CLICK_AIR),
+    RIGHT_CLICK_BLOCK(RIGHT_CLICK_HAND, CLICK_BLOCK),
     LEFT_CLICK_HAND(HAND),
-    LEFT_CLICK_AIR(RIGHT_CLICK_HAND),
-    LEFT_CLICK_BLOCK(RIGHT_CLICK_HAND),
+    LEFT_CLICK_AIR(RIGHT_CLICK_HAND, CLICK_AIR),
+    LEFT_CLICK_BLOCK(RIGHT_CLICK_HAND, CLICK_BLOCK),
     MIDDLE_CLICK_HAND(HAND),
-    MIDDLE_CLICK_AIR(RIGHT_CLICK_HAND),
-    MIDDLE_CLICK_BLOCK(RIGHT_CLICK_HAND),
+    MIDDLE_CLICK_AIR(RIGHT_CLICK_HAND, CLICK_AIR),
+    MIDDLE_CLICK_BLOCK(RIGHT_CLICK_HAND, CLICK_BLOCK),
 
     // Inventory triggers:
     INVENTORY,
     RIGHT_CLICK_INV(INVENTORY),
     LEFT_CLICK_INV(INVENTORY),
-    MIDDLE_CLICK(INVENTORY),
+    MIDDLE_CLICK_INV(INVENTORY),
     SHIFT_CLICK_INV(INVENTORY),
     SHIFT_RIGHT_CLICK_INV(RIGHT_CLICK_INV),
     SHIFT_LEFT_CLICK_INV(LEFT_CLICK_INV),
-    MIDDLE_CLICK_INV(MIDDLE_CLICK),
     DOUBLE_CLICK_INV(INVENTORY),
     DROP_INV(INVENTORY),
     CONTROL_DROP_INV(DROP_INV),
@@ -79,5 +80,14 @@ public enum TriggerType {
 
     public TriggerType[] getParents() {
         return parents;
+    }
+
+    public boolean isChildOf(TriggerType parent) {
+        for (TriggerType type : parents) {
+            if (type == parent || type.isChildOf(parent)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
