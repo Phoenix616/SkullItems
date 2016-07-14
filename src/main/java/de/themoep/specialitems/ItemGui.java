@@ -1,11 +1,9 @@
 package de.themoep.specialitems;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -58,17 +56,15 @@ public class ItemGui implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (viewers.contains(event.getWhoClicked().getUniqueId())) {
-            if (event.getAction() != InventoryAction.PICKUP_ONE) {
-                event.setCancelled(true);
-                if (event.getAction() == InventoryAction.SWAP_WITH_CURSOR) {
-                    event.getWhoClicked().sendMessage(plugin.getTag() + ChatColor.RED + "You need an empty cursor to take items!");
-                }
-            } else if (event.getClickedInventory() == event.getView().getTopInventory()) {
-                event.setCancelled(true);
+            event.setCancelled(true);
+            if (event.isLeftClick() && event.getClickedInventory() == event.getView().getTopInventory()) {
                 if (plugin.checkPerm(event.getWhoClicked(), "specialitems.gui.take", "gui.take")) {
-                    event.setCursor(event.getCurrentItem());
-                    if (event.getWhoClicked() instanceof Player) {
-                        ((Player) event.getWhoClicked()).updateInventory();
+                    if (event.getWhoClicked().getInventory().addItem(event.getCurrentItem()).size() == 0) {
+                        if (event.getWhoClicked() instanceof Player) {
+                            ((Player) event.getWhoClicked()).updateInventory();
+                        }
+                    } else {
+                        event.getWhoClicked().sendMessage(plugin.getTag() + ChatColor.RED + " You need an empty slot in your inventory!");
                     }
                 }
             }
