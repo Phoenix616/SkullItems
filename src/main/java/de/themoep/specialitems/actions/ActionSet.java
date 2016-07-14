@@ -63,12 +63,13 @@ public class ActionSet {
      */
     public List<ItemAction> getActions(TriggerType trigger) {
         List<ItemAction> actions = actionMap.get(trigger);
-        if (actions == null) {
-            for (int i = 0; i < trigger.getParents().length && actions == null; i++) {
-                actions = actionMap.get(trigger.getParents()[i]);
+        actions = actions != null ? actions : new ArrayList<ItemAction>();
+        if (actions.size() == 0) {
+            for (int i = 0; i < trigger.getParents().length && actions.size() == 0; i++) {
+                actions = getActions(trigger.getParents()[i]);
             }
         }
-        return actions != null ? actions : new ArrayList<ItemAction>();
+        return actions;
     }
 
     /**
