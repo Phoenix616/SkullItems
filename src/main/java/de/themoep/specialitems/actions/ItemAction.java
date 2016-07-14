@@ -130,20 +130,20 @@ public class ItemAction {
         List<String> repl = new ArrayList<>(Arrays.asList(
                 "trigger", trigger.getType().toString(),
                 "player", player.getName(),
-                "x", Integer.toString(player.getLocation().getBlockX()),
-                "y", Integer.toString(player.getLocation().getBlockY()),
-                "z", Integer.toString(player.getLocation().getBlockZ()),
-                "x.exact", Double.toString(player.getLocation().getX()),
-                "y.exact", Double.toString(player.getLocation().getY()),
-                "z.exact", Double.toString(player.getLocation().getZ()),
-                "eye.x", Double.toString(player.getEyeLocation().getBlockX()),
-                "eye.y", Double.toString(player.getEyeLocation().getBlockY()),
-                "eye.z", Double.toString(player.getEyeLocation().getBlockZ()),
-                "eye.x.exact", Double.toString(player.getEyeLocation().getX()),
-                "eye.y.exact", Double.toString(player.getEyeLocation().getY()),
-                "eye.z.exact", Double.toString(player.getEyeLocation().getZ()),
-                "pitch", Float.toString(player.getEyeLocation().getPitch()),
-                "yaw", Float.toString(player.getEyeLocation().getYaw())
+                "x", String.valueOf(player.getLocation().getBlockX()),
+                "y", String.valueOf(player.getLocation().getBlockY()),
+                "z", String.valueOf(player.getLocation().getBlockZ()),
+                "x.exact", String.valueOf(player.getLocation().getX()),
+                "y.exact", String.valueOf(player.getLocation().getY()),
+                "z.exact", String.valueOf(player.getLocation().getZ()),
+                "eye.x", String.valueOf(player.getEyeLocation().getBlockX()),
+                "eye.y", String.valueOf(player.getEyeLocation().getBlockY()),
+                "eye.z", String.valueOf(player.getEyeLocation().getBlockZ()),
+                "eye.x.exact", String.valueOf(player.getEyeLocation().getX()),
+                "eye.y.exact", String.valueOf(player.getEyeLocation().getY()),
+                "eye.z.exact", String.valueOf(player.getEyeLocation().getZ()),
+                "pitch", String.valueOf(player.getEyeLocation().getPitch()),
+                "yaw", String.valueOf(player.getEyeLocation().getYaw())
         ));
         if (trigger instanceof TargetedTrigger) {
             TargetedTrigger targetedTrigger = (TargetedTrigger) trigger;
@@ -151,20 +151,20 @@ public class ItemAction {
             Location targetEyeLocation = targetedTrigger.getTarget().getEyeLocation();
             repl.addAll(Arrays.asList(
                     "target.name", targetedTrigger.getTarget().getName(),
-                    "target.x", Integer.toString(targetLocation.getBlockX()),
-                    "target.y", Integer.toString(targetLocation.getBlockY()),
-                    "target.z", Integer.toString(targetLocation.getBlockZ()),
-                    "target.x.exact", Double.toString(targetLocation.getX()),
-                    "target.y.exact", Double.toString(targetLocation.getY()),
-                    "target.z.exact", Double.toString(targetLocation.getZ()),
-                    "target.eye.x", Double.toString(targetEyeLocation.getBlockX()),
-                    "target.eye.y", Double.toString(targetEyeLocation.getBlockY()),
-                    "target.eye.z", Double.toString(targetEyeLocation.getBlockZ()),
-                    "target.eye.x.exact", Double.toString(targetEyeLocation.getX()),
-                    "target.eye.y.exact", Double.toString(targetEyeLocation.getY()),
-                    "target.eye.z.exact", Double.toString(targetEyeLocation.getZ()),
-                    "target.pitch", Float.toString(targetEyeLocation.getPitch()),
-                    "target.yaw", Float.toString(targetEyeLocation.getYaw())
+                    "target.x", String.valueOf(targetLocation.getBlockX()),
+                    "target.y", String.valueOf(targetLocation.getBlockY()),
+                    "target.z", String.valueOf(targetLocation.getBlockZ()),
+                    "target.x.exact", String.valueOf(targetLocation.getX()),
+                    "target.y.exact", String.valueOf(targetLocation.getY()),
+                    "target.z.exact", String.valueOf(targetLocation.getZ()),
+                    "target.eye.x", String.valueOf(targetEyeLocation.getBlockX()),
+                    "target.eye.y", String.valueOf(targetEyeLocation.getBlockY()),
+                    "target.eye.z", String.valueOf(targetEyeLocation.getBlockZ()),
+                    "target.eye.x.exact", String.valueOf(targetEyeLocation.getX()),
+                    "target.eye.y.exact", String.valueOf(targetEyeLocation.getY()),
+                    "target.eye.z.exact", String.valueOf(targetEyeLocation.getZ()),
+                    "target.pitch", String.valueOf(targetEyeLocation.getPitch()),
+                    "target.yaw", String.valueOf(targetEyeLocation.getYaw())
             ));
         } else if (value.contains("%target.")) {
             Entity target = null;
@@ -201,14 +201,14 @@ public class ItemAction {
             if (targetLocation != null) {
                 repl.addAll(Arrays.asList(
                         "target.name", targetName,
-                        "target.x", Integer.toString(targetLocation.getBlockX()),
-                        "target.y", Integer.toString(targetLocation.getBlockY()),
-                        "target.z", Integer.toString(targetLocation.getBlockZ()),
-                        "target.x.exact", Double.toString(targetLocation.getX()),
-                        "target.y.exact", Double.toString(targetLocation.getY()),
-                        "target.z.exact", Double.toString(targetLocation.getZ()),
-                        "target.pitch", Float.toString(targetLocation.getPitch()),
-                        "target.yaw", Float.toString(targetLocation.getYaw())
+                        "target.x", String.valueOf(targetLocation.getBlockX()),
+                        "target.y", String.valueOf(targetLocation.getBlockY()),
+                        "target.z", String.valueOf(targetLocation.getBlockZ()),
+                        "target.x.exact", String.valueOf(targetLocation.getX()),
+                        "target.y.exact", String.valueOf(targetLocation.getY()),
+                        "target.z.exact", String.valueOf(targetLocation.getZ()),
+                        "target.pitch", String.valueOf(targetLocation.getPitch()),
+                        "target.yaw", String.valueOf(targetLocation.getYaw())
                 ));
             }
         }
