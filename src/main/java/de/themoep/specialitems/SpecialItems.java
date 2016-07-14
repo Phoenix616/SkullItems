@@ -39,7 +39,9 @@ public class SpecialItems extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
         itemManager = new ItemManager(this);
-        gui.destroy();
+        if (gui != null) {
+            gui.destroy();
+        }
     }
 
     public ItemManager getItemManager() {
