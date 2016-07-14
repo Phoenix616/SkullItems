@@ -1,9 +1,11 @@
 package de.themoep.specialitems;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -56,17 +58,21 @@ public class ItemGui implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() == event.getView().getTopInventory() && viewers.contains(event.getWhoClicked().getUniqueId())) {
-            event.setCancelled(true);
-            if (plugin.checkPerm(event.getWhoClicked(), "specialitems.gui.take", "gui.take")) {
-                if (event.getCursor() == null) {
-                    event.setCursor(event.getCurrentItem());
-                    if (event.getWhoClicked() instanceof Player) {
-                        ((Player) event.getWhoClicked()).updateInventory();
+        if (viewers.contains(event.getWhoClicked().getUniqueId())) {
+            if (event.getClickedInventory() == event.getView().getTopInventory()) {
+                event.setCancelled(true);
+                if (plugin.checkPerm(event.getWhoClicked(), "specialitems.gui.take", "gui.take")) {
+                    if (event.getCursor() == null || event.getCursor().getType() == Material.AIR) {
+                        event.setCursor(event.getCurrentItem());
+                        if (event.getWhoClicked() instanceof Player) {
+                            ((Player) event.getWhoClicked()).updateInventory();
+                        }
+                    } else {
+                        event.getWhoClicked().sendMessage(plugin.getTag() + ChatColor.RED + "You need an empty cursor to take items!");
                     }
-                } else {
-                    event.getWhoClicked().sendMessage(plugin.getTag() + ChatColor.RED + "You need an empty cursor to take items!");
                 }
+            } else if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY || event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
+                event.setCancelled(true);
             }
         }
     }
