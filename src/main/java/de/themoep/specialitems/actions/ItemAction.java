@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.util.Vector;
@@ -35,18 +36,46 @@ public class ItemAction {
     private final ItemActionType type;
     private final String value;
 
-    public ItemAction(ItemActionType type) {
+    public ItemAction(ItemActionType type) throws IllegalArgumentException {
         this(type, "");
     }
 
-    public ItemAction(ItemActionType type, String value) {
+    /**
+     *  Create a new ItemAction
+     * @param type The type of this action
+     * @param value The optional value of this action
+     * @throws IllegalArgumentException Invalid ItemAction config
+     */
+    public ItemAction(ItemActionType type, String value) throws IllegalArgumentException {
         this.type = type;
         this.value = value;
+        if (getType().requiresValue() && !hasValue()) {
+            throw new IllegalArgumentException("ActionType " + getType() + " requires an additional value! (Add it with a space after the type in the config)");
+        }
+        if (getType() == ItemActionType.LAUNCH_PROJECTILE) {
+            String[] values = getValue().split(" ");
+            try {
+                Class clazz = Class.forName("org.bukkit.entity." + values[0]);
+                if (!Projectile.class.isAssignableFrom(clazz)) {
+                    throw new IllegalArgumentException("Error while loading action with type " + getType() + "! The string " + values[0] + " is not a valid projectile class name! (Value: " + getValue() + ")");
+                }
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("Error while loading action with type " + getType() + "! The string " + values[0] + " is not a valid projectile class name! (Value: " + getValue() + ")");
+            }
+            if (values.length > 1) {
+                try {
+                    Double.parseDouble(values[1]);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Error while loading action with type " + getType() + "! The string " + values[1] + " is not a valid double! (Value: " + getValue() + ")");
+                }
+            }
+        }
     }
 
     /**
      * Get an ItemAction from a string like it is represented in the toString() method
      * @param string The string to get it from
+     * @throws IllegalArgumentException Invalid ItemAction config
      * @return The ItemAction
      */
     public static ItemAction fromString(String string) {
@@ -182,7 +211,7 @@ public class ItemAction {
     }
 
     public boolean hasValue() {
-        return !value.isEmpty();
+        return value != null && !value.isEmpty();
     }
 
     /**
@@ -193,10 +222,6 @@ public class ItemAction {
     public Trigger execute(Trigger trigger) {
         Player player = trigger.getPlayer();
         trigger.setCancel(true);
-        if (getType().requiresValue() && !hasValue()) {
-            trigger.getPlayer().sendMessage(ChatColor.RED + "Error while running this item's action " + getType() + "! It requires a value but I can't find any? Please inform an administrator about this configuration error!");
-            return trigger;
-        }
         switch (getType()) {
             case OPEN_CRAFTING:
                 player.closeInventory();
@@ -216,6 +241,20 @@ public class ItemAction {
                 break;
             case CLOSE_INV:
                 player.closeInventory();
+                break;
+            case LAUNCH_PROJECTILE:
+                String[] values = getValue().split(" ");
+                try {
+                    Class projectile = Class.forName("org.bukkit.entity." + values[0]);
+                    Vector dir = player.getEyeLocation().getDirection();
+                    if (values.length > 0) {
+                        dir.multiply(Double.parseDouble(values[1]));
+                    }
+                    player.launchProjectile(projectile, dir);
+                } catch (ClassNotFoundException e) {
+                    player.sendMessage(ChatColor.RED + "Internal error while trying to launch projectile due to wrong projectile class name! Please contact an administrator!");
+                    e.printStackTrace();
+                }
                 break;
             case RUN_COMMAND:
                 player.performCommand(getValue(trigger));

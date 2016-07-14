@@ -27,7 +27,7 @@ public class ActionSet {
 
     private Map<TriggerType, List<ItemAction>> actionMap = new HashMap<>();
 
-    public ActionSet(ConfigurationSection actionSection) {
+    public ActionSet(ConfigurationSection actionSection) throws IllegalArgumentException {
         for (String key : actionSection.getKeys(false)) {
             TriggerType triggerType = TriggerType.valueOf(key.toUpperCase());
 

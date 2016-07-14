@@ -21,6 +21,7 @@ enum ItemActionType {
     OPEN_ENCHANTING,
     OPEN_ANVIL,
     CLOSE_INV,
+    LAUNCH_PROJECTILE(true),
     RUN_COMMAND(true),
     SUDO_COMMAND(true),
     CONSOLE_COMMAND(true),

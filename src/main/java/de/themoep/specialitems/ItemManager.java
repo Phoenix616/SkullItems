@@ -68,93 +68,97 @@ public class ItemManager {
             return 0;
         }
         for (String id : items.getKeys(false)) {
-            ConfigurationSection itemSection = items.getConfigurationSection(id);
-            SpecialItem item = new SpecialItem(
-                    id,
-                    itemSection.getString("displayname"),
-                    itemSection.getItemStack("item"),
-                    new ActionSet(itemSection.getConfigurationSection("actions")),
-                    itemSection.getStringList("lore")
-            );
-            itemMap.put(item.getId(), item);
+            try {
+                ConfigurationSection itemSection = items.getConfigurationSection(id);
+                SpecialItem item = new SpecialItem(
+                        id,
+                        itemSection.getString("displayname"),
+                        itemSection.getItemStack("item"),
+                        new ActionSet(itemSection.getConfigurationSection("actions")),
+                        itemSection.getStringList("lore")
+                );
+                itemMap.put(item.getId(), item);
 
-            // Register recipe
-            ConfigurationSection recipeSection = itemSection.getConfigurationSection("recipe");
-            if (recipeSection != null && item.getItem() != null) {
-                Recipe recipe = null;
-                try {
-                    String recipeType = recipeSection.getString("type");
-                    if ("shapeless".equalsIgnoreCase(recipeType)) {
-                        recipe = new ShapelessRecipe(item.getItem());
-                        for (String matStr : recipeSection.getConfigurationSection("materials").getKeys(false)) {
-                            Material mat = Material.valueOf(matStr.toUpperCase());
-                            ((ShapelessRecipe) recipe).addIngredient(
-                                    recipeSection.getInt("materials." + matStr), mat
-                            );
-                        }
-                    } else if ("shaped".equalsIgnoreCase(recipeType)) {
-                        recipe = new ShapedRecipe(item.getItem());
-                        List<String> shape = recipeSection.getStringList("shape");
-                        ((ShapedRecipe) recipe).shape(shape.toArray(new String[shape.size()]));
-                        for (String rKey : recipeSection.getConfigurationSection("keys").getKeys(false)) {
-                            if (rKey.length() > 1) {
-                                throw new IllegalArgumentException(
-                                        "Shaped craft key " + rKey + " has to be a char and only be 1 long!"
+                // Register recipe
+                ConfigurationSection recipeSection = itemSection.getConfigurationSection("recipe");
+                if (recipeSection != null && item.getItem() != null) {
+                    Recipe recipe = null;
+                    try {
+                        String recipeType = recipeSection.getString("type");
+                        if ("shapeless".equalsIgnoreCase(recipeType)) {
+                            recipe = new ShapelessRecipe(item.getItem());
+                            for (String matStr : recipeSection.getConfigurationSection("materials").getKeys(false)) {
+                                Material mat = Material.valueOf(matStr.toUpperCase());
+                                ((ShapelessRecipe) recipe).addIngredient(
+                                        recipeSection.getInt("materials." + matStr), mat
                                 );
                             }
-                            Material mat = Material.valueOf(recipeSection.getString("keys." + rKey).toUpperCase());
-                            ((ShapedRecipe) recipe).setIngredient(rKey.toCharArray()[0], mat);
+                        } else if ("shaped".equalsIgnoreCase(recipeType)) {
+                            recipe = new ShapedRecipe(item.getItem());
+                            List<String> shape = recipeSection.getStringList("shape");
+                            ((ShapedRecipe) recipe).shape(shape.toArray(new String[shape.size()]));
+                            for (String rKey : recipeSection.getConfigurationSection("keys").getKeys(false)) {
+                                if (rKey.length() > 1) {
+                                    throw new IllegalArgumentException(
+                                            "Shaped craft key " + rKey + " has to be a char and only be 1 long!"
+                                    );
+                                }
+                                Material mat = Material.valueOf(recipeSection.getString("keys." + rKey).toUpperCase());
+                                ((ShapedRecipe) recipe).setIngredient(rKey.toCharArray()[0], mat);
+                            }
+                        } else if ("furnace".equalsIgnoreCase(recipeType)) {
+                            recipe = new FurnaceRecipe(item.getItem(), Material.valueOf(recipeSection.getString("input")));
+                            ((FurnaceRecipe) recipe).setExperience((float) recipeSection.getDouble("exp"));
+                        } else {
+                            throw new IllegalArgumentException(recipeType + " is not a supported or valid recipe type!");
                         }
-                    } else if ("furnace".equalsIgnoreCase(recipeType)) {
-                        recipe = new FurnaceRecipe(item.getItem(), Material.valueOf(recipeSection.getString("input")));
-                        ((FurnaceRecipe) recipe).setExperience((float) recipeSection.getDouble("exp"));
-                    } else {
-                        throw new IllegalArgumentException(recipeType + " is not a supported or valid recipe type!");
+                    } catch (IllegalArgumentException e) {
+                        plugin.getLogger().log(Level.SEVERE, "Could not load recipe for " + id + "!", e);
                     }
-                } catch (IllegalArgumentException e) {
-                    plugin.getLogger().log(Level.SEVERE, "Could not load recipe for " + id + "!", e);
+                    if (recipe != null) {
+                        plugin.getServer().addRecipe(recipe);
+                    }
                 }
-                if (recipe != null) {
-                    plugin.getServer().addRecipe(recipe);
-                }
-            }
 
-            // Register permissions
-            if (plugin.getConfig().getBoolean("permissions.use")) {
-                Permission usePerm = new Permission("specialitems.item." + id.toLowerCase() + ".use");
-                try {
-                    plugin.getServer().getPluginManager().addPermission(usePerm);
-                } catch (IllegalArgumentException e) {
-                    // Permission is already defined
-                    usePerm = plugin.getServer().getPluginManager().getPermission(usePerm.getName());
-                }
-                if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
-                    for (TriggerType trigger : TriggerType.values()) {
-                        Permission triggerPerm = new Permission("specialitems.item." + id.toLowerCase() + ".use." + trigger.toString().toLowerCase());
-                        triggerPerm.addParent(usePerm, true);
-                        try {
-                            plugin.getServer().getPluginManager().addPermission(usePerm);
-                        } catch (IllegalArgumentException e) {
-                            // Permission is already defined
+                // Register permissions
+                if (plugin.getConfig().getBoolean("permissions.use")) {
+                    Permission usePerm = new Permission("specialitems.item." + id.toLowerCase() + ".use");
+                    try {
+                        plugin.getServer().getPluginManager().addPermission(usePerm);
+                    } catch (IllegalArgumentException e) {
+                        // Permission is already defined
+                        usePerm = plugin.getServer().getPluginManager().getPermission(usePerm.getName());
+                    }
+                    if (plugin.getConfig().getBoolean("permissions.usepertrigger")) {
+                        for (TriggerType trigger : TriggerType.values()) {
+                            Permission triggerPerm = new Permission("specialitems.item." + id.toLowerCase() + ".use." + trigger.toString().toLowerCase());
+                            triggerPerm.addParent(usePerm, true);
+                            try {
+                                plugin.getServer().getPluginManager().addPermission(usePerm);
+                            } catch (IllegalArgumentException e) {
+                                // Permission is already defined
+                            }
                         }
                     }
                 }
-            }
-            if (plugin.getConfig().getBoolean("permissions.craft")) {
-                Permission craftPerm = new Permission("specialitems.item." + id.toLowerCase() + ".craft");
-                try {
-                    plugin.getServer().getPluginManager().addPermission(craftPerm);
-                } catch (IllegalArgumentException e) {
-                    // Permission is already defined
+                if (plugin.getConfig().getBoolean("permissions.craft")) {
+                    Permission craftPerm = new Permission("specialitems.item." + id.toLowerCase() + ".craft");
+                    try {
+                        plugin.getServer().getPluginManager().addPermission(craftPerm);
+                    } catch (IllegalArgumentException e) {
+                        // Permission is already defined
+                    }
                 }
-            }
-            if (plugin.getConfig().getBoolean("permissions.drop")) {
-                Permission dropPerm = new Permission("specialitems.item." + id.toLowerCase() + ".drop");
-                try {
-                    plugin.getServer().getPluginManager().addPermission(dropPerm);
-                } catch (IllegalArgumentException e) {
-                    // Permission is already defined
+                if (plugin.getConfig().getBoolean("permissions.drop")) {
+                    Permission dropPerm = new Permission("specialitems.item." + id.toLowerCase() + ".drop");
+                    try {
+                        plugin.getServer().getPluginManager().addPermission(dropPerm);
+                    } catch (IllegalArgumentException e) {
+                        // Permission is already defined
+                    }
                 }
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().log(Level.SEVERE, "Error while loading item " + id + "!", e);
             }
         }
         return itemMap.size();
