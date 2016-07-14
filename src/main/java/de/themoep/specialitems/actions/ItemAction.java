@@ -247,7 +247,7 @@ public class ItemAction {
                 try {
                     Class projectile = Class.forName("org.bukkit.entity." + values[0]);
                     Vector dir = player.getEyeLocation().getDirection();
-                    if (values.length > 0) {
+                    if (values.length > 1) {
                         dir.multiply(Double.parseDouble(values[1]));
                     }
                     player.launchProjectile(projectile, dir);
