@@ -46,7 +46,7 @@ public class ActionTriggerListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!event.hasItem()) {
             return;
@@ -54,12 +54,16 @@ public class ActionTriggerListener implements Listener {
         TriggerType triggerType = TriggerType.UNSUPPORTED;
         switch (event.getAction()) {
             case RIGHT_CLICK_AIR:
+                triggerType = TriggerType.RIGHT_CLICK_AIR;
+                break;
             case RIGHT_CLICK_BLOCK:
-                triggerType = TriggerType.RIGHT_CLICK_HAND;
+                triggerType = TriggerType.RIGHT_CLICK_BLOCK;
                 break;
             case LEFT_CLICK_AIR:
+                triggerType = TriggerType.LEFT_CLICK_AIR;
+                break;
             case LEFT_CLICK_BLOCK:
-                triggerType = TriggerType.LEFT_CLICK_HAND;
+                triggerType = TriggerType.LEFT_CLICK_BLOCK;
                 break;
         }
 
