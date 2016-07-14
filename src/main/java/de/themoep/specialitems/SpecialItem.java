@@ -34,9 +34,9 @@ public class SpecialItem {
     public SpecialItem(String id, String name, ItemStack item, ActionSet actions, List<String> lore) {
         this.id = id.toLowerCase();
         this.name = name;
-        this.item = buildItemStack(item);
         this.actions = actions;
-        this.lore = lore != null ? lore : new ArrayList<String>();
+        this.lore = lore;
+        this.item = buildItemStack(item);
     }
 
     public SpecialItem(SpecialItem item) {
