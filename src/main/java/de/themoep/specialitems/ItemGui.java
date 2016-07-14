@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashSet;
@@ -55,7 +56,7 @@ public class ItemGui implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() == inv && viewers.contains(event.getWhoClicked().getUniqueId())) {
+        if (event.getClickedInventory() == event.getView().getTopInventory() && viewers.contains(event.getWhoClicked().getUniqueId())) {
             event.setCancelled(true);
             if (plugin.checkPerm(event.getWhoClicked(), "specialitems.gui.take", "gui.take")) {
                 if (event.getCursor() == null) {
@@ -72,14 +73,14 @@ public class ItemGui implements Listener {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        if (event.getView().getTopInventory() == inv && viewers.contains(event.getWhoClicked().getUniqueId())) {
+        if (event.getWhoClicked().getOpenInventory() == event.getView().getTopInventory() && viewers.contains(event.getWhoClicked().getUniqueId())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onInventoryMove(InventoryMoveItemEvent event) {
-        if (event.getDestination() == inv) {
+        if (event.getInitiator().getHolder() instanceof Player && viewers.contains(((Player) event.getInitiator().getHolder()).getUniqueId())) {
             event.setCancelled(true);
         }
     }
@@ -94,6 +95,14 @@ public class ItemGui implements Listener {
     @EventHandler
     public void onLogout(PlayerQuitEvent event) {
         if (viewers.contains(event.getPlayer().getUniqueId())) {
+            viewers.remove(event.getPlayer().getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void onTeleport(PlayerTeleportEvent event) {
+        if (viewers.contains(event.getPlayer().getUniqueId())) {
+            event.getPlayer().closeInventory();
             viewers.remove(event.getPlayer().getUniqueId());
         }
     }
