@@ -9,6 +9,8 @@ lang:
     general:  "&cYou don't have the permission %perm%!"
     use: "&cYou don't have the permission to use this item!"
     craft: "&cYou don't have the permission to craft this item!"
+    gui:
+      take: "&cYou don't have the permission to take items out of the gui!"
 items:
   workbench:
     displayname: Mini Craftingtable

@@ -15,17 +15,26 @@ permissions:
       description: Gives permission to the plugin command
       default: op
    specialitems.command.list:
-      description: Gives permission to the plugin command
+      description: Gives permission to the list command
       default: op
    specialitems.command.get:
-      description: Gives permission to the plugin command
+      description: Gives permission to the get items
       default: op
    specialitems.command.get.others:
-      description: Gives permission to the plugin command
+      description: Gives permission to get items for other players
+      default: op
+   specialitems.command.gui:
+      description: Gives permission to open the gui
+      default: op
+   specialitems.command.gui.others:
+      description: Gives permission to open the gui for other players
       default: op
    specialitems.command.set:
-      description: Gives permission to the plugin command
+      description: Gives permission to set item config values
       default: op
    specialitems.command.reload:
-      description: Gives permission to the plugin command
+      description: Gives permission to reload the plugin
+      default: op
+   specialitems.gui.take:
+      description: Gives permission to take items from the gui
       default: op

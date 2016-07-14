@@ -25,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SpecialItems extends JavaPlugin {
 
     private ItemManager itemManager;
+    private ItemGui gui = null;
 
     public void onEnable() {
         loadConfig();
@@ -37,6 +38,10 @@ public class SpecialItems extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
         itemManager = new ItemManager(this);
+        if (gui != null) {
+            gui.destroy();
+        }
+        gui = new ItemGui(this);
     }
 
     public ItemManager getItemManager() {
@@ -71,5 +76,9 @@ public class SpecialItems extends JavaPlugin {
         }
         sender.sendMessage(getLang("nopermission." + type, "perm", permission));
         return false;
+    }
+
+    public ItemGui getGui() {
+        return gui;
     }
 }

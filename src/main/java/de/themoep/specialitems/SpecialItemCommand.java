@@ -58,6 +58,31 @@ public class SpecialItemCommand implements CommandExecutor {
                         }
                     }
                 }
+            } else if ("gui".equalsIgnoreCase(args[0])) {
+                if (plugin.checkPerm(sender, "specialitems.command.gui")) {
+                    Player player = null;
+                    if (args.length > 2) {
+                        if (plugin.checkPerm(sender, "specialitems.command.gui.others")) {
+                            player = plugin.getServer().getPlayer(args[2]);
+                            if (player == null || !player.isOnline()) {
+                                sender.sendMessage(plugin.getTag() + ChatColor.RED + " No player with the name "
+                                        + ChatColor.YELLOW + args[2] + ChatColor.RED + " found!");
+                                return true;
+                            }
+                        } else {
+                            return true;
+                        }
+                    } else if (sender instanceof Player) {
+                        player = (Player) sender;
+                    } else {
+                        sender.sendMessage(ChatColor.RED
+                                + " Use /" + label + " gui <playername> " +
+                                "to open the GUI for a player from the console!");
+                        return true;
+                    }
+                    sender.sendMessage(ChatColor.YELLOW + "Opened gui for " + player.getName());
+                    plugin.getGui().show(player);
+                }
             } else if ("get".equalsIgnoreCase(args[0])) {
                 if (plugin.checkPerm(sender, "specialitems.command.get")) {
                     if (args.length > 1) {
@@ -78,7 +103,7 @@ public class SpecialItemCommand implements CommandExecutor {
                             } else if (sender instanceof Player) {
                                 player = (Player) sender;
                             } else {
-                                sender.sendMessage(plugin.getTag() + ChatColor.RED
+                                sender.sendMessage(ChatColor.RED
                                         + " Use /" + label + " get <itemname> <playername> " +
                                         "to give a special item to a player from the console!");
                                 return true;
