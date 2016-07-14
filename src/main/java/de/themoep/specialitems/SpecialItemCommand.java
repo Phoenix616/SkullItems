@@ -80,7 +80,9 @@ public class SpecialItemCommand implements CommandExecutor {
                                 "to open the GUI for a player from the console!");
                         return true;
                     }
-                    sender.sendMessage(ChatColor.YELLOW + "Opened gui for " + player.getName());
+                    if (sender != player) {
+                        sender.sendMessage(ChatColor.YELLOW + "Opened gui for " + player.getName());
+                    }
                     plugin.getGui().show(player);
                 }
             } else if ("get".equalsIgnoreCase(args[0])) {
