@@ -143,7 +143,7 @@ public class ActionTriggerListener implements Listener {
                 triggerType = TriggerType.RIGHT_BORDER_INV;
                 break;
             case NUMBER_KEY:
-                triggerType = TriggerType.valueOf("NUMBER_KEY_" + (event.getHotbarButton() + 1) + " + _INV");
+                triggerType = TriggerType.valueOf("NUMBER_KEY_" + (event.getHotbarButton() + 1) + "_INV");
                 break;
         }
 
