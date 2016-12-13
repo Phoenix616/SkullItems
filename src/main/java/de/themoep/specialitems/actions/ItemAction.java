@@ -54,8 +54,8 @@ public class ItemAction {
         if (getType().requiresValue() && !hasValue()) {
             throw new IllegalArgumentException("ActionType " + getType() + " requires an additional value! (Add it with a space after the type in the config)");
         }
+        String[] values = getValue().split(" ");
         if (getType() == ItemActionType.LAUNCH_PROJECTILE) {
-            String[] values = getValue().split(" ");
             try {
                 Class clazz = Class.forName("org.bukkit.entity." + values[0]);
                 if (!Projectile.class.isAssignableFrom(clazz)) {
@@ -69,6 +69,33 @@ public class ItemAction {
                     Double.parseDouble(values[1]);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("Error while loading action with type " + getType() + "! The string " + values[1] + " is not a valid double! (Value: " + getValue() + ")");
+                }
+            }
+        } else if (getType() == ItemActionType.EFFECT) {
+            int i = 0;
+            if (values.length < 2) {
+                throw new IllegalArgumentException("Error while loading action with type " + getType() + "! The not enough value parts! " + values.length + ", needs at least 2 (Value: " + getValue() + ")");
+            }
+            PotionEffectType potionType = PotionEffectType.getByName(values[i]);
+            if (potionType == null) {
+                i++;
+                potionType = PotionEffectType.getByName(values[i]);
+            }
+            if (potionType == null) {
+                throw new IllegalArgumentException("Error while loading action with type " + getType() + "! Neither " + values[0] + " nor " + values[1] + " are potion effects! (Value: " + getValue() + ")");
+            }
+            if (values.length > i + 1) {
+                try {
+                    Integer.parseInt(values[i + 1]);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Error while loading action with type " + getType() + "!" + values[i + 1] + " is not a valid duration integer! (Value: " + getValue() + ")");
+                }
+            }
+            if (values.length > i + 2) {
+                try {
+                    Integer.parseInt(values[i + 2]);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Error while loading action with type " + getType() + "!" + values[i + 2] + " is not a valid amplifier integer! (Value: " + getValue() + ")");
                 }
             }
         }
