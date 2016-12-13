@@ -291,17 +291,21 @@ public class ItemAction {
             case EFFECT:
                 int i = 0;
                 if (values.length < 2) {
-                    player.sendMessage(ChatColor.RED + "The item's effect is misconfigured! (" + values.length + ", needs to be at least 2)Please contact an administrator!");
+                    trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! (" + values.length + ", needs to be at least 2)Please contact an administrator!");
                     break;
                 }
                 PotionEffectType potionType = PotionEffectType.getByName(values[i]);
                 if (potionType == null) {
                     player = trigger.getPlayer().getServer().getPlayer(values[i]);
+                    if (player == null) {
+                        trigger.getPlayer().sendMessage(ChatColor.RED + "No target found! (" + values[i] + ")");
+                        break;
+                    }
                     i++;
                     potionType = PotionEffectType.getByName(values[i]);
                 }
                 if (potionType == null) {
-                    player.sendMessage(ChatColor.RED + "The item's effect is misconfigured! Neiter " + values[0] + " nor " + values[1] + " are potion effects! Please contact an administrator!");
+                    trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! Neiter " + values[0] + " nor " + values[1] + " are potion effects! Please contact an administrator!");
                     break;
                 }
                 int duration = 30;
@@ -309,7 +313,7 @@ public class ItemAction {
                     try {
                         duration = Integer.parseInt(values[i + 1]);
                     } catch (NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + "The item's effect is misconfigured! " + values[i + 1] + " is not a valid duration integer! Please contact an administrator!");
+                        trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! " + values[i + 1] + " is not a valid duration integer! Please contact an administrator!");
                         break;
                     }
                 }
@@ -318,7 +322,7 @@ public class ItemAction {
                     try {
                         amplifier = Integer.parseInt(values[i + 2]);
                     } catch (NumberFormatException e) {
-                        player.sendMessage(ChatColor.RED + "The item's effect is misconfigured! " + values[i + 1] + " is not a valid amplifier integer! Please contact an administrator!");
+                        trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! " + values[i + 1] + " is not a valid amplifier integer! Please contact an administrator!");
                         break;
                     }
                 }
