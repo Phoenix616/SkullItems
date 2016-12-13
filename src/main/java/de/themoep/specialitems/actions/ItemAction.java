@@ -261,7 +261,7 @@ public class ItemAction {
         trigger.setCancel(true);
         String[] values = new String[0];
         if (hasValue()) {
-            values = getValue().split(" ");
+            values = getValue(trigger).split(" ");
         }
         switch (getType()) {
             case OPEN_CRAFTING:
