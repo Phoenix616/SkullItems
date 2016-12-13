@@ -21,6 +21,8 @@ enum ItemActionType {
     OPEN_ENCHANTING,
     OPEN_ANVIL,
     CLOSE_INV,
+    CLEAR_EFFECTS,
+    EFFECT(true),
     LAUNCH_PROJECTILE(true),
     RUN_COMMAND(true),
     SUDO_COMMAND(true),

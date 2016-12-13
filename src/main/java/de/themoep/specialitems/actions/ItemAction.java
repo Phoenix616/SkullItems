@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -227,9 +229,13 @@ public class ItemAction {
      * @param trigger Information about the trigger that started this action
      * @return The modified trigger
      */
-    public Trigger execute(Trigger trigger) {
+    public Trigger execute(Trigger trigger) throws IllegalArgumentException {
         Player player = trigger.getPlayer();
         trigger.setCancel(true);
+        String[] values = new String[0];
+        if (hasValue()) {
+            values = getValue().split(" ");
+        }
         switch (getType()) {
             case OPEN_CRAFTING:
                 player.closeInventory();
@@ -250,8 +256,56 @@ public class ItemAction {
             case CLOSE_INV:
                 player.closeInventory();
                 break;
+            case CLEAR_EFFECTS:
+                for (PotionEffect effect : player.getActivePotionEffects()) {
+                    player.removePotionEffect(effect.getType());
+                }
+                break;
+            case EFFECT:
+                int i = 0;
+                if (values.length < 2) {
+                    player.sendMessage(ChatColor.RED + "The item's effect is misconfigured! (" + values.length + ", needs to be at least 2)Please contact an administrator!");
+                    break;
+                }
+                PotionEffectType potionType = PotionEffectType.getByName(values[i]);
+                if (potionType == null) {
+                    player = trigger.getPlayer().getServer().getPlayer(values[i]);
+                    i++;
+                    potionType = PotionEffectType.getByName(values[i]);
+                }
+                if (potionType == null) {
+                    player.sendMessage(ChatColor.RED + "The item's effect is misconfigured! Neiter " + values[0] + " nor " + values[1] + " are potion effects! Please contact an administrator!");
+                    break;
+                }
+                int duration = 30;
+                if (values.length > i + 1) {
+                    try {
+                        duration = Integer.parseInt(values[i + 1]);
+                    } catch (NumberFormatException e) {
+                        player.sendMessage(ChatColor.RED + "The item's effect is misconfigured! " + values[i + 1] + " is not a valid duration integer! Please contact an administrator!");
+                        break;
+                    }
+                }
+                int amplifier = 0;
+                if (values.length > i + 2) {
+                    try {
+                        amplifier = Integer.parseInt(values[i + 2]);
+                    } catch (NumberFormatException e) {
+                        player.sendMessage(ChatColor.RED + "The item's effect is misconfigured! " + values[i + 1] + " is not a valid amplifier integer! Please contact an administrator!");
+                        break;
+                    }
+                }
+                boolean ambient = false;
+                if (values.length > i + 3) {
+                    ambient = Boolean.parseBoolean(values[i + 3]);
+                }
+                boolean particles = true;
+                if (values.length > i + 4) {
+                    particles = Boolean.parseBoolean(values[i + 4]);
+                }
+                player.addPotionEffect(new PotionEffect(potionType, duration * 20, amplifier, ambient, particles));
+                break;
             case LAUNCH_PROJECTILE:
-                String[] values = getValue().split(" ");
                 try {
                     Class projectile = Class.forName("org.bukkit.entity." + values[0]);
                     Vector dir = player.getEyeLocation().getDirection();
