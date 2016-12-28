@@ -361,11 +361,14 @@ public class ItemAction {
                 if (!isOp) {
                     player.setOp(true);
                 }
-                player.performCommand(getValue(trigger));
-                if (!isOp) {
-                    player.setOp(false);
+                try {
+                    player.performCommand(getValue(trigger));
+                } finally {
+                    if (!isOp) {
+                        player.setOp(false);
+                    }
+                    permAtt.remove();
                 }
-                permAtt.remove();
                 break;
             case CONSOLE_COMMAND:
                 player.getServer().dispatchCommand(
