@@ -30,8 +30,7 @@ items:
       u: leather
     item:
       ==: org.bukkit.inventory.ItemStack
-      type: SKULL_ITEM
-      damage: 3
+      type: PLAYER_HEAD
       meta:
         ==: ItemMeta
         meta-type: SKULL
@@ -56,8 +55,7 @@ items:
         u: leather
     item:
       ==: org.bukkit.inventory.ItemStack
-      type: SKULL_ITEM
-      damage: 3
+      type: PLAYER_HEAD
       meta:
         ==: ItemMeta
         meta-type: SKULL

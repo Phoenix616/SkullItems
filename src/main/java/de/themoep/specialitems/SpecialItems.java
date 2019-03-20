@@ -3,6 +3,7 @@ package de.themoep.specialitems;
 import de.themoep.specialitems.listeners.ActionTriggerListener;
 import de.themoep.specialitems.listeners.ItemCraftListener;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,11 +24,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 
 public class SpecialItems extends JavaPlugin {
+    public static NamespacedKey KEY;
 
     private ItemManager itemManager;
     private ItemGui gui = null;
 
     public void onEnable() {
+        KEY = new NamespacedKey(this, "item");
         loadConfig();
         gui = new ItemGui(this);
         getCommand("specialitems").setExecutor(new SpecialItemCommand(this));

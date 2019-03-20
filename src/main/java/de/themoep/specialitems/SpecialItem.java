@@ -2,9 +2,12 @@ package de.themoep.specialitems;
 
 import de.themoep.specialitems.actions.ActionSet;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
+import org.bukkit.inventory.meta.tags.ItemTagType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,19 +80,34 @@ public class SpecialItem {
         for (String line : getLore()) {
             lore.add(ChatColor.GRAY + ChatColor.translateAlternateColorCodes('&', line));
         }
-        lore.add(hideString(getId(), ChatColor.BLUE + "" + ChatColor.ITALIC + "SpecialItems"));
+        lore.add(ChatColor.BLUE + "" + ChatColor.ITALIC + "SpecialItems");
         meta.setLore(lore);
+
+        CustomItemTagContainer tags = meta.getCustomTagContainer();
+        tags.setCustomTag(SpecialItems.KEY, ItemTagType.STRING, getId());
 
         item.setItemMeta(meta);
 
         return item;
     }
 
-    public static boolean isSpecial(ItemStack item) {
-        return item != null
-                && item.hasItemMeta()
-                && item.getItemMeta().hasLore()
-                && item.getItemMeta().getLore().get(item.getItemMeta().getLore().size() - 1).contains("SpecialItems");
+    public static String getId(ItemStack item) {
+        if (item != null && item.hasItemMeta()) {
+            ItemMeta meta = item.getItemMeta();
+            CustomItemTagContainer tags = meta.getCustomTagContainer();
+            if (tags.hasCustomTag(SpecialItems.KEY, ItemTagType.STRING)) {
+                return tags.getCustomTag(SpecialItems.KEY, ItemTagType.STRING);
+            }
+            if (meta.hasLore()
+                    && meta.getLore().get(meta.getLore().size() - 1).contains("SpecialItems")) {
+                String hidden = SpecialItem.getHiddenString(item);
+                if (hidden == null) {
+                    throw new IllegalArgumentException("Item should be a special item but no hidden id string was found?");
+                }
+                return hidden;
+            }
+        }
+        return null;
     }
 
     /**
@@ -97,7 +115,9 @@ public class SpecialItem {
      * @param hidden The string to hide
      * @param string The string to hide in
      * @return The string with the hidden string appended
+     * @deprecated Information should now be stored via a custom tag container
      */
+    @Deprecated
     public static String hideString(String hidden, String string) {
         for (int i = string.length() - 1; i >= 0; i--) {
             if (string.length() - i > 2)
@@ -148,7 +168,7 @@ public class SpecialItem {
     public boolean isInInv(Inventory inventory) {
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack item = inventory.getItem(i);
-            if (isSpecial(item) && id.equals(getHiddenString(item))) {
+            if (id.equals(getId(item))) {
                 return true;
             }
         }
@@ -164,7 +184,7 @@ public class SpecialItem {
         int amount = 0;
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack item = inventory.getItem(i);
-            if (isSpecial(item) && id.equals(getHiddenString(item))) {
+            if (id.equals(getId(item))) {
                 amount += item.getAmount();
             }
         }
@@ -180,7 +200,7 @@ public class SpecialItem {
     public boolean removeFromInv(Inventory inventory, int amount) {
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack item = inventory.getItem(i);
-            if (isSpecial(item) && id.equals(getHiddenString(item))) {
+            if (id.equals(getId(item))) {
                 if (item.getAmount() > amount) {
                     item.setAmount(item.getAmount() - amount);
                 } else {

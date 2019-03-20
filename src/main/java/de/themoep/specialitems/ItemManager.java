@@ -4,12 +4,15 @@ import de.themoep.specialitems.actions.ActionSet;
 import de.themoep.specialitems.actions.TriggerType;
 import de.themoep.specialitems.actions.Trigger;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
+import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.permissions.Permission;
 
 import java.util.Collection;
@@ -57,7 +60,7 @@ public class ItemManager {
         Iterator<Recipe> recipes = plugin.getServer().recipeIterator();
         while (recipes.hasNext()) {
             Recipe recipe = recipes.next();
-            if (SpecialItem.isSpecial(recipe.getResult())) {
+            if (SpecialItem.getId(recipe.getResult()) != null) {
                 recipes.remove();
             }
         }
@@ -86,7 +89,7 @@ public class ItemManager {
                     try {
                         String recipeType = recipeSection.getString("type");
                         if ("shapeless".equalsIgnoreCase(recipeType)) {
-                            recipe = new ShapelessRecipe(item.getItem());
+                            recipe = new ShapelessRecipe(new NamespacedKey(plugin, item.getId()), item.getItem());
                             for (String matStr : recipeSection.getConfigurationSection("materials").getKeys(false)) {
                                 Material mat = Material.valueOf(matStr.toUpperCase());
                                 ((ShapelessRecipe) recipe).addIngredient(
@@ -94,7 +97,7 @@ public class ItemManager {
                                 );
                             }
                         } else if ("shaped".equalsIgnoreCase(recipeType)) {
-                            recipe = new ShapedRecipe(item.getItem());
+                            recipe = new ShapedRecipe(new NamespacedKey(plugin, item.getId()), item.getItem());
                             List<String> shape = recipeSection.getStringList("shape");
                             ((ShapedRecipe) recipe).shape(shape.toArray(new String[shape.size()]));
                             for (String rKey : recipeSection.getConfigurationSection("keys").getKeys(false)) {
@@ -107,7 +110,14 @@ public class ItemManager {
                                 ((ShapedRecipe) recipe).setIngredient(rKey.toCharArray()[0], mat);
                             }
                         } else if ("furnace".equalsIgnoreCase(recipeType)) {
-                            recipe = new FurnaceRecipe(item.getItem(), Material.valueOf(recipeSection.getString("input")));
+                            recipe = new FurnaceRecipe(new NamespacedKey(
+                                    plugin,
+                                    item.getId()),
+                                    item.getItem(),
+                                    Material.valueOf(recipeSection.getString("input")),
+                                    (float) recipeSection.getDouble("experience", 0),
+                                    recipeSection.getInt("time", 200)
+                            );
                             ((FurnaceRecipe) recipe).setExperience((float) recipeSection.getDouble("exp"));
                         } else {
                             throw new IllegalArgumentException(recipeType + " is not a supported or valid recipe type!");
@@ -183,16 +193,11 @@ public class ItemManager {
      * @return The SpecialItem or <tt>null</tt> if it isn't one or none was found with the encoded item name
      */
     public SpecialItem getSpecialItem(ItemStack item) throws IllegalArgumentException {
-        if (!SpecialItem.isSpecial(item)) {
+        String id = SpecialItem.getId(item);
+        if (id == null) {
             return null;
         }
-
-        String hidden = SpecialItem.getHiddenString(item);
-        if (hidden == null) {
-            throw new IllegalArgumentException("Item should be a special item but no hidden id string was found?");
-        }
-
-        return getSpecialItem(hidden);
+        return getSpecialItem(id);
     }
 
     /**
