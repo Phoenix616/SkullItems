@@ -1,8 +1,8 @@
 package de.themoep.specialitems;
 
 import de.themoep.specialitems.actions.ActionSet;
-import de.themoep.specialitems.actions.TriggerType;
 import de.themoep.specialitems.actions.Trigger;
+import de.themoep.specialitems.actions.TriggerType;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,13 +11,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
-import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.permissions.Permission;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -56,20 +54,12 @@ public class ItemManager {
         // reset item map
         itemMap = new HashMap<>();
 
-        // reset recipes
-        Iterator<Recipe> recipes = plugin.getServer().recipeIterator();
-        while (recipes.hasNext()) {
-            Recipe recipe = recipes.next();
-            if (SpecialItem.getId(recipe.getResult()) != null) {
-                recipes.remove();
-            }
-        }
-
         ConfigurationSection items = plugin.getConfig().getConfigurationSection("items");
         if (items == null || items.getKeys(false).size() == 0) {
             plugin.getLogger().log(Level.WARNING, "No special items configured?");
             return 0;
         }
+        List<String> failedRecipes = new ArrayList<>();
         for (String id : items.getKeys(false)) {
             try {
                 ConfigurationSection itemSection = items.getConfigurationSection(id);
@@ -126,7 +116,9 @@ public class ItemManager {
                         plugin.getLogger().log(Level.SEVERE, "Could not load recipe for " + id + "!", e);
                     }
                     if (recipe != null) {
-                        plugin.getServer().addRecipe(recipe);
+                        if (!plugin.getServer().addRecipe(recipe)) {
+                            failedRecipes.add(id);
+                        }
                     }
                 }
 
@@ -171,6 +163,11 @@ public class ItemManager {
                 plugin.getLogger().log(Level.SEVERE, "Error while loading item " + id + "!", e);
             }
         }
+
+        if (!failedRecipes.isEmpty()) {
+            plugin.getLogger().log(Level.WARNING, "Unable to add recipe for items " + failedRecipes + ". If this is a reload and you edited the config then existing recipes will not be edited due to limitations in the server!");
+        }
+
         return itemMap.size();
     }
 
