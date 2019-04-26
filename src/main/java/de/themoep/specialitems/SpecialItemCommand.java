@@ -149,7 +149,7 @@ public class SpecialItemCommand implements CommandExecutor {
                                             "to set the item from the console!");
                                     return true;
                                 }
-                            } else if ("displayname".equalsIgnoreCase(args[2])) {
+                            } else if ("name".equalsIgnoreCase(args[2]) || "displayname".equalsIgnoreCase(args[2])) {
                                 if (args.length > 3) {
                                     StringBuilder sb = new StringBuilder(args[3]);
                                     for (int i = 4; i < args.length; i++) {
@@ -177,7 +177,7 @@ public class SpecialItemCommand implements CommandExecutor {
                             return true;
                         }
                     }
-                    sender.sendMessage(plugin.getTag() + ChatColor.RED + " Usage: /" + label + " set <itemname> [item|displayname] [<value>]");
+                    sender.sendMessage(plugin.getTag() + ChatColor.RED + " Usage: /" + label + " set <id> [name <name> | item [<material>] | <configpath> <value>]");
                 }
 
             } else if ("info".equals(args[0])) {
