@@ -159,6 +159,7 @@ public class ItemAction {
         List<String> repl = new ArrayList<>(Arrays.asList(
                 "trigger", trigger.getType().toString(),
                 "player", player.getName(),
+                "world", player.getLocation().getWorld().getName(),
                 "x", String.valueOf(player.getLocation().getBlockX()),
                 "y", String.valueOf(player.getLocation().getBlockY()),
                 "z", String.valueOf(player.getLocation().getBlockZ()),
@@ -180,6 +181,7 @@ public class ItemAction {
             Location targetEyeLocation = targetedTrigger.getTarget().getEyeLocation();
             repl.addAll(Arrays.asList(
                     "target.name", targetedTrigger.getTarget().getName(),
+                    "target.world", targetedTrigger.getTarget().getLocation().getWorld().getName(),
                     "target.x", String.valueOf(targetLocation.getBlockX()),
                     "target.y", String.valueOf(targetLocation.getBlockY()),
                     "target.z", String.valueOf(targetLocation.getBlockZ()),
@@ -230,6 +232,7 @@ public class ItemAction {
             if (targetLocation != null) {
                 repl.addAll(Arrays.asList(
                         "target.name", targetName,
+                        "target.world", targetLocation.getWorld().getName(),
                         "target.x", String.valueOf(targetLocation.getBlockX()),
                         "target.y", String.valueOf(targetLocation.getBlockY()),
                         "target.z", String.valueOf(targetLocation.getBlockZ()),
