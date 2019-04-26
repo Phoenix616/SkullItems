@@ -116,7 +116,11 @@ public class ItemManager {
                         plugin.getLogger().log(Level.SEVERE, "Could not load recipe for " + id + "!", e);
                     }
                     if (recipe != null) {
-                        if (!plugin.getServer().addRecipe(recipe)) {
+                        try {
+                            if (!plugin.getServer().addRecipe(recipe)) {
+                                failedRecipes.add(id);
+                            }
+                        } catch (IllegalStateException e) {
                             failedRecipes.add(id);
                         }
                     }
