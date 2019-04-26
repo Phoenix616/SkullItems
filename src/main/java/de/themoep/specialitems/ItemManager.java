@@ -16,6 +16,7 @@ import org.bukkit.permissions.Permission;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -53,6 +54,15 @@ public class ItemManager {
     private int loadItems() {
         // reset item map
         itemMap = new HashMap<>();
+
+        // reset recipes
+        Iterator<Recipe> recipes = plugin.getServer().recipeIterator();
+        while (recipes.hasNext()) {
+            Recipe recipe = recipes.next();
+            if (SpecialItem.getId(recipe.getResult()) != null) {
+                recipes.remove();
+            }
+        }
 
         ConfigurationSection items = plugin.getConfig().getConfigurationSection("items");
         if (items == null || items.getKeys(false).size() == 0) {
