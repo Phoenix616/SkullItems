@@ -30,6 +30,7 @@ items:
       u: leather
     item:
       ==: org.bukkit.inventory.ItemStack
+      v: 1602
       type: PLAYER_HEAD
       meta:
         ==: ItemMeta
@@ -55,6 +56,7 @@ items:
         u: leather
     item:
       ==: org.bukkit.inventory.ItemStack
+      v: 1602
       type: PLAYER_HEAD
       meta:
         ==: ItemMeta
