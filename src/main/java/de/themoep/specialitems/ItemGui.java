@@ -79,13 +79,6 @@ public class ItemGui implements Listener {
     }
 
     @EventHandler
-    public void onInventoryMove(InventoryMoveItemEvent event) {
-        if (event.getInitiator().getHolder() instanceof Player && viewers.contains(((Player) event.getInitiator().getHolder()).getUniqueId())) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (viewers.contains(event.getPlayer().getUniqueId())) {
             viewers.remove(event.getPlayer().getUniqueId());
