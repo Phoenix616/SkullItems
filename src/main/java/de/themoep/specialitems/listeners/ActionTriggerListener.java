@@ -5,10 +5,12 @@ import de.themoep.specialitems.SpecialItems;
 import de.themoep.specialitems.actions.TargetedTrigger;
 import de.themoep.specialitems.actions.TriggerType;
 import de.themoep.specialitems.actions.Trigger;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -18,6 +20,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -69,6 +72,21 @@ public class ActionTriggerListener implements Listener {
 
         if (triggerType == TriggerType.UNSUPPORTED) {
             return;
+        }
+
+        // Hand items prioritisation handling
+        if (event.getHand() == EquipmentSlot.OFF_HAND) {
+            Material mainHand = event.getPlayer().getInventory().getItemInMainHand().getType();
+            if (mainHand == Material.CROSSBOW) {
+                return;
+            }
+        } else if (event.getHand() == EquipmentSlot.HAND) {
+            if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null) {
+                Material clicked = event.getClickedBlock().getType();
+                if (clicked.isInteractable() && !event.getPlayer().isSneaking()) {
+                    return;
+                }
+            }
         }
 
         Trigger trigger;
