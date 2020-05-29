@@ -20,12 +20,11 @@ package de.themoep.specialitems;
 
 import de.themoep.specialitems.actions.ActionSet;
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
-import org.bukkit.inventory.meta.tags.ItemTagType;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,8 +85,8 @@ public class SpecialItem {
         lore.add(ChatColor.BLUE + "" + ChatColor.ITALIC + "SpecialItems");
         meta.setLore(lore);
 
-        CustomItemTagContainer tags = meta.getCustomTagContainer();
-        tags.setCustomTag(SpecialItems.KEY, ItemTagType.STRING, getId());
+        PersistentDataContainer tags = meta.getPersistentDataContainer();
+        tags.set(SpecialItems.KEY, PersistentDataType.STRING, getId());
 
         item.setItemMeta(meta);
 
@@ -97,9 +96,9 @@ public class SpecialItem {
     public static String getId(ItemStack item) {
         if (item != null && item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
-            CustomItemTagContainer tags = meta.getCustomTagContainer();
-            if (tags.hasCustomTag(SpecialItems.KEY, ItemTagType.STRING)) {
-                return tags.getCustomTag(SpecialItems.KEY, ItemTagType.STRING);
+            PersistentDataContainer tags = meta.getPersistentDataContainer();
+            if (tags.has(SpecialItems.KEY, PersistentDataType.STRING)) {
+                return tags.get(SpecialItems.KEY, PersistentDataType.STRING);
             }
             if (meta.hasLore()
                     && meta.getLore().get(meta.getLore().size() - 1).contains("SpecialItems")) {
@@ -118,7 +117,7 @@ public class SpecialItem {
      * @param hidden The string to hide
      * @param string The string to hide in
      * @return The string with the hidden string appended
-     * @deprecated Information should now be stored via a custom tag container
+     * @deprecated Information should now be stored via a persistent data container
      */
     @Deprecated
     public static String hideString(String hidden, String string) {
