@@ -69,6 +69,7 @@ public enum TriggerType {
     CONSUME,
     DROP,
     CRAFT,
+    BLOCK_PLACE,
 
     UNSUPPORTED,;
 

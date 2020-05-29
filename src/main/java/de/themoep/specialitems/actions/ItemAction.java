@@ -260,6 +260,7 @@ public class ItemAction {
      * @return The modified trigger
      */
     public Trigger execute(Trigger trigger) throws IllegalArgumentException {
+        trigger.setExecuted(true);
         Player player = trigger.getPlayer();
         trigger.setCancel(true);
         String[] values = new String[0];

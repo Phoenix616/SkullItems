@@ -11,6 +11,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -358,6 +359,21 @@ public class ActionTriggerListener implements Listener {
                     break;
             }
             event.getPlayer().updateInventory();
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Trigger trigger = new Trigger(event, event.getPlayer(), event.getItemInHand(), TriggerType.BLOCK_PLACE);
+        plugin.getItemManager().executeActions(trigger);
+        if (trigger.wasExecuted()) {
+            if (trigger.shouldRemoveItem()) {
+                event.getPlayer().getInventory().setItemInMainHand(removeOne(event.getPlayer().getInventory().getItemInMainHand()));
+                event.getPlayer().updateInventory();
+            }
+        } else if (trigger.getSpecialItem() != null) {
+            // Special handling to not allow placement of special items
+            event.setCancelled(true);
         }
     }
 

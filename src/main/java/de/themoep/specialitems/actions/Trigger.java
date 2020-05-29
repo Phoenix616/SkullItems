@@ -26,6 +26,7 @@ public class Trigger {
     private final Player player;
     private final ItemStack item;
     private final TriggerType type;
+    private boolean executed = false;
     private boolean cancel = false;
     private boolean removeItem = false;
 
@@ -92,5 +93,13 @@ public class Trigger {
 
     public boolean hasSpecialItem() {
         return specialItem != null;
+    }
+
+    public boolean wasExecuted() {
+        return executed;
+    }
+
+    public void setExecuted(boolean executed) {
+        this.executed = executed;
     }
 }
