@@ -24,6 +24,8 @@ enum ItemActionType {
     OPEN_ANVIL,
     CLOSE_INV,
     CLEAR_EFFECTS,
+    PLAY_SOUND(true),
+    STOP_SOUND,
     EFFECT(true),
     LAUNCH_PROJECTILE(true),
     RUN_COMMAND(true),

@@ -19,11 +19,15 @@ package de.themoep.specialitems.actions;
  */
 
 import de.themoep.specialitems.SpecialItems;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.inventory.InventoryType;
@@ -34,7 +38,9 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class ItemAction {
@@ -74,10 +80,21 @@ public class ItemAction {
                     throw new IllegalArgumentException("Error while loading action with type " + getType() + "! The string " + values[1] + " is not a valid double! (Value: " + getValue() + ")");
                 }
             }
+        } else if (getType() == ItemActionType.PLAY_SOUND) {
+            if (values.length < 1) {
+                throw new IllegalArgumentException("Error while loading action with type " + getType() + "! Not enough value parts! " + values.length + ", needs at least 1 (Value: " + getValue() + ")");
+            }
+            if (values.length > 1) {
+                SoundCategory.valueOf(values[1].toUpperCase(Locale.ROOT));
+            }
+        } else if (getType() == ItemActionType.STOP_SOUND) {
+            if (values.length < 1) {
+                throw new IllegalArgumentException("Error while loading action with type " + getType() + "! Not enough value parts! " + values.length + ", needs at least 1 (Value: " + getValue() + ")");
+            }
         } else if (getType() == ItemActionType.EFFECT) {
             int i = 0;
             if (values.length < 2) {
-                throw new IllegalArgumentException("Error while loading action with type " + getType() + "! The not enough value parts! " + values.length + ", needs at least 2 (Value: " + getValue() + ")");
+                throw new IllegalArgumentException("Error while loading action with type " + getType() + "! Not enough value parts! " + values.length + ", needs at least 2 (Value: " + getValue() + ")");
             }
             PotionEffectType potionType = PotionEffectType.getByName(values[i]);
             if (potionType == null) {
@@ -270,6 +287,7 @@ public class ItemAction {
         if (hasValue()) {
             values = getValue(trigger).split(" ");
         }
+        List<Entity> targets = Collections.emptyList();
         switch (getType()) {
             case OPEN_CRAFTING:
                 player.closeInventory();
@@ -291,23 +309,83 @@ public class ItemAction {
                 player.closeInventory();
                 break;
             case CLEAR_EFFECTS:
-                for (PotionEffect effect : player.getActivePotionEffects()) {
-                    player.removePotionEffect(effect.getType());
+                targets = getTargets(trigger, values.length > 0 ? values[0] : null);
+                for (Entity target : targets) {
+                    if (target instanceof LivingEntity) {
+                        for (PotionEffect effect : ((LivingEntity) target).getActivePotionEffects()) {
+                            ((LivingEntity) target).removePotionEffect(effect.getType());
+                        }
+                    }
+                }
+                break;
+            case PLAY_SOUND:
+                if (values.length < 1) {
+                    trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! (" + values.length + ", needs to be at least 1) Please contact an administrator!");
+                    break;
+                }
+                SoundCategory category = SoundCategory.MASTER;
+                if (values.length > 1) {
+                    category = SoundCategory.valueOf(values[1].toUpperCase(Locale.ROOT));
+                }
+                targets = getTargets(trigger, values.length > 2 ? values[2] : null);
+                float volume = 1;
+                if (values.length > 3) {
+                    volume = Float.parseFloat(values[3]);
+                }
+                float pitch = 1;
+                if (values.length > 4) {
+                    pitch = Float.parseFloat(values[4]);
+                }
+
+                Location playLocation = null;
+                if (values.length > 7) {
+                    playLocation = new Location(trigger.getPlayer().getWorld(),
+                            Double.parseDouble(values[5]),
+                            Double.parseDouble(values[6]),
+                            Double.parseDouble(values[7])
+                    );
+                }
+
+                String playSound = values[0];
+                try {
+                    playSound = Sound.valueOf(values[0].toUpperCase(Locale.ROOT)).getKey().toString();
+                } catch (IllegalArgumentException ignored) {}
+
+                if (targets.isEmpty()) {
+                    player.getWorld().playSound(playLocation != null ? playLocation : player.getLocation(), playSound, category, volume, pitch);
+                } else {
+                    for (Entity target : targets) {
+                        if (target instanceof Player) {
+                            ((Player) target).playSound(playLocation != null ? playLocation : target.getLocation(), playSound, category, volume, pitch);
+                        }
+                    }
+                }
+                break;
+            case STOP_SOUND:
+                if (values.length < 1) {
+                    trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! (" + values.length + ", needs to be at least 1) Please contact an administrator!");
+                    break;
+                }
+                String stopSound = values[0];
+                try {
+                    stopSound = Sound.valueOf(values[0].toUpperCase(Locale.ROOT)).getKey().toString();
+                } catch (IllegalArgumentException ignored) {}
+                targets = getTargets(trigger, values.length > 1 ? values[1] : null);
+                for (Entity target : targets) {
+                    if (target instanceof Player) {
+                        ((Player) target).stopSound(stopSound);
+                    }
                 }
                 break;
             case EFFECT:
                 int i = 0;
                 if (values.length < 2) {
-                    trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! (" + values.length + ", needs to be at least 2)Please contact an administrator!");
+                    trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! (" + values.length + ", needs to be at least 2) Please contact an administrator!");
                     break;
                 }
                 PotionEffectType potionType = PotionEffectType.getByName(values[i]);
                 if (potionType == null) {
-                    player = trigger.getPlayer().getServer().getPlayer(values[i]);
-                    if (player == null) {
-                        trigger.getPlayer().sendMessage(ChatColor.RED + "No target found! (" + values[i] + ")");
-                        break;
-                    }
+                    targets = getTargets(trigger, values.length > 1 ? values[2] : null);
                     i++;
                     potionType = PotionEffectType.getByName(values[i]);
                 }
@@ -341,7 +419,12 @@ public class ItemAction {
                 if (values.length > i + 4) {
                     particles = Boolean.parseBoolean(values[i + 4]);
                 }
-                player.addPotionEffect(new PotionEffect(potionType, duration * 20, amplifier, ambient, particles));
+                PotionEffect effect = new PotionEffect(potionType, duration * 20, amplifier, ambient, particles);
+                for (Entity target : targets) {
+                    if (target instanceof LivingEntity) {
+                        ((LivingEntity) target).addPotionEffect(effect);
+                    }
+                }
                 break;
             case LAUNCH_PROJECTILE:
                 try {
@@ -395,5 +478,27 @@ public class ItemAction {
                 break;
         }
         return trigger;
+    }
+
+    private List<Entity> getTargets(Trigger trigger, String value) {
+        List<Entity> targets = new ArrayList<>();
+        if (value != null) {
+            if (!"world".equalsIgnoreCase(value) && !"all".equalsIgnoreCase(value)) {
+                try {
+                    targets.addAll(Bukkit.selectEntities(trigger.getPlayer(), value));
+                } catch (IllegalArgumentException e) {
+                    for (String s : value.split(",")) {
+                        Player p = trigger.getPlayer().getServer().getPlayer(s);
+                        if (p != null) {
+                            targets.add(p);
+                        }
+                    }
+
+                }
+            }
+        } else {
+            targets.add(trigger.getPlayer());
+        }
+        return targets;
     }
 }
