@@ -27,6 +27,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -126,7 +127,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlayerInventoryClick(InventoryClickEvent event) {
         if (event.getCurrentItem() == null || !(event.getWhoClicked() instanceof Player)) {
             return;
@@ -181,7 +182,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onItemDrop(PlayerDropItemEvent event) {
         Trigger trigger = new Trigger(event, event.getPlayer(), event.getItemDrop().getItemStack(), TriggerType.DROP);
         plugin.getItemManager().executeActions(trigger);
@@ -192,7 +193,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onItemConsume(PlayerItemConsumeEvent event) {
         Trigger trigger = new Trigger(event, event.getPlayer(), event.getItem(), TriggerType.CONSUME);
         plugin.getItemManager().executeActions(trigger);
@@ -202,7 +203,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onItemCraft(CraftItemEvent event) {
         Trigger trigger = new Trigger(event, (Player) event.getWhoClicked(), event.getRecipe().getResult(), TriggerType.CRAFT);
         plugin.getItemManager().executeActions(trigger);
@@ -212,7 +213,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onArrowShoot(ProjectileLaunchEvent event) {
         if (event.getEntity().getShooter() instanceof Player) {
             Player player = (Player) event.getEntity().getShooter();
@@ -233,7 +234,7 @@ public class ActionTriggerListener implements Listener {
 
     // Targeted Triggers:
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onArrowHit(ProjectileHitEvent event) {
         if (event.getEntity().getShooter() instanceof Player) {
             SpecialItem item = null;
@@ -264,7 +265,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlayerAttackEntity(EntityDamageByEntityEvent event) {
         Player player = null;
         TriggerType triggerType = TriggerType.UNSUPPORTED;
@@ -313,7 +314,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlayerInteractWithEntity(PlayerInteractEntityEvent event) {
         TriggerType triggerType =
                 event.getRightClicked() instanceof Player
@@ -365,7 +366,7 @@ public class ActionTriggerListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onBlockPlace(BlockPlaceEvent event) {
         Trigger trigger = new Trigger(event, event.getPlayer(), event.getItemInHand(), TriggerType.BLOCK_PLACE);
         plugin.getItemManager().executeActions(trigger);
