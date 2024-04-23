@@ -23,6 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
@@ -96,10 +97,10 @@ public class ItemAction {
             if (values.length < 2) {
                 throw new IllegalArgumentException("Error while loading action with type " + getType() + "! Not enough value parts! " + values.length + ", needs at least 2 (Value: " + getValue() + ")");
             }
-            PotionEffectType potionType = PotionEffectType.getByName(values[i]);
+            PotionEffectType potionType = Registry.EFFECT.match(values[i]);
             if (potionType == null) {
                 i++;
-                potionType = PotionEffectType.getByName(values[i]);
+                potionType = Registry.EFFECT.match(values[i]);
             }
             if (potionType == null) {
                 throw new IllegalArgumentException("Error while loading action with type " + getType() + "! Neither " + values[0] + " nor " + values[1] + " are potion effects! (Value: " + getValue() + ")");
@@ -347,9 +348,14 @@ public class ItemAction {
                 }
 
                 String playSound = values[0];
-                try {
-                    playSound = Sound.valueOf(values[0].toUpperCase(Locale.ROOT)).getKey().toString();
-                } catch (IllegalArgumentException ignored) {}
+                Sound sound = Registry.SOUNDS.match(values[0]);
+                if (sound != null) {
+                    playSound = sound.getKey().toString();
+                } else {
+                    try {
+                        playSound = Sound.valueOf(values[0].toUpperCase(Locale.ROOT)).getKey().toString();
+                    } catch (IllegalArgumentException ignored) {}
+                }
 
                 if (targets.isEmpty()) {
                     player.getWorld().playSound(playLocation != null ? playLocation : player.getLocation(), playSound, category, volume, pitch);
@@ -383,11 +389,11 @@ public class ItemAction {
                     trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! (" + values.length + ", needs to be at least 2) Please contact an administrator!");
                     break;
                 }
-                PotionEffectType potionType = PotionEffectType.getByName(values[i]);
+                PotionEffectType potionType = Registry.EFFECT.match(values[i]);
                 if (potionType == null) {
                     targets = getTargets(trigger, values.length > 1 ? values[2] : null);
                     i++;
-                    potionType = PotionEffectType.getByName(values[i]);
+                    potionType = Registry.EFFECT.match(values[i]);
                 }
                 if (potionType == null) {
                     trigger.getPlayer().sendMessage(ChatColor.RED + "The item's effect is misconfigured! Neiter " + values[0] + " nor " + values[1] + " are potion effects! Please contact an administrator!");
